@@ -155,7 +155,7 @@
                                         {{ $proposta->created_at->format('d/m/Y') }}
                                     </td>
                                     <td class="px-4 py-4">
-                                        <div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div class="flex items-center justify-end gap-1">
                                             {{-- Ver proposta --}}
                                             <a href="{{ route('propostas.show', $proposta) }}"
                                                class="inline-flex items-center gap-1 text-xs font-medium text-slate-600 hover:text-indigo-600 px-2.5 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors"
@@ -165,6 +165,16 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                                 </svg>
                                                 Ver
+                                            </a>
+                                            {{-- Gerar PDF --}}
+                                            <a href="{{ route('propostas.pdf', $proposta) }}"
+                                               target="_blank"
+                                               class="inline-flex items-center gap-1 text-xs font-medium text-slate-600 hover:text-rose-600 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 transition-colors"
+                                               title="Gerar PDF">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                                </svg>
+                                                PDF
                                             </a>
                                             {{-- Editar --}}
                                             <a href="{{ route('propostas.edit', $proposta) }}"

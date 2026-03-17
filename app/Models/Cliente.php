@@ -24,6 +24,11 @@ class Cliente extends Model
         return $this->hasMany(Proposta::class);
     }
 
+    public function projetos(): HasMany
+    {
+        return $this->hasMany(Projeto::class);
+    }
+
     public function credenciais(): HasMany
     {
         return $this->hasMany(ClienteCredencial::class)->orderBy('sistema');

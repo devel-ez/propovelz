@@ -14,6 +14,18 @@ Route::resource('propostas', PropostaController::class);
 // Clientes (CRUD)
 Route::resource('clientes', ClienteController::class);
 
+// Projetos (CRUD + Kanban)
+Route::resource('projetos', \App\Http\Controllers\ProjetoController::class);
+Route::resource('projetos.tarefas', \App\Http\Controllers\TarefaController::class)->except(['index', 'create', 'show', 'edit']);
+Route::post('projetos/{projeto}/tarefas/reorder', [\App\Http\Controllers\TarefaController::class, 'reorder'])->name('projetos.tarefas.reorder');
+
+// Consulta Whois
+Route::post('whois', [\App\Http\Controllers\WhoisController::class, 'consultar'])->name('whois.consultar');
+
+// Gerar PDF da proposta
+Route::get('propostas/{proposta}/pdf', [PropostaController::class, 'gerarPdf'])
+    ->name('propostas.pdf');
+
 // Gerar link público de uma proposta
 Route::post('propostas/{proposta}/gerar-link', [PropostaController::class, 'gerarLink'])
     ->name('propostas.gerar-link');

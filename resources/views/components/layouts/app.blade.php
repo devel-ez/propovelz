@@ -11,6 +11,9 @@
     <!-- TailwindCSS for preview/standalone execution (Remove if compiling via Vite) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- AlpineJS for Interactions -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
     <!-- Design System Typography: Plus Jakarta Sans for a refined, modern SaaS aesthetic -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -113,9 +116,9 @@
             <nav class="space-y-1 mb-8">
                 <span class="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Menu</span>
                 
-                <a href="/" class="flex items-center justify-between px-3 py-2.5 {{ request()->routeIs('propostas.*') ? '' : 'bg-brand-600 text-white shadow-sm shadow-brand-200' }} text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors group">
+                <a href="/" class="flex items-center justify-between px-3 py-2.5 {{ request()->is('/') ? 'bg-brand-600 text-white shadow-sm shadow-brand-200' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }} rounded-xl transition-colors group">
                     <div class="flex items-center gap-3 relative">
-                        <svg class="w-5 h-5 opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 {{ request()->is('/') ? 'text-white' : 'text-slate-400 group-hover:text-brand-500' }} transition-colors opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                         </svg>
                         <span class="text-sm font-semibold">Dashboard</span>
@@ -140,15 +143,13 @@
                     </div>
                 </a>
 
-                <a href="#" class="flex items-center justify-between px-3 py-2.5 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors group">
+                <a href="/projetos" class="flex items-center justify-between px-3 py-2.5 {{ request()->is('projetos*') ? 'bg-brand-600 text-white shadow-sm shadow-brand-200' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }} rounded-xl transition-colors group">
                     <div class="flex items-center gap-3">
-                        <svg class="w-5 h-5 text-slate-400 group-hover:text-brand-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <svg class="w-5 h-5 {{ request()->is('projetos*') ? 'text-white' : 'text-slate-400 group-hover:text-brand-500' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
-                        <span class="text-sm font-medium">Automações</span>
+                        <span class="text-sm font-medium">Projetos</span>
                     </div>
-                    <span class="bg-warning-100 text-warning-600 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase flex items-center tracking-wider">Em breve</span>
                 </a>
             </nav>
 

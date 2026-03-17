@@ -172,6 +172,22 @@ class PropostaController extends Controller
     }
 
     /* ------------------------------------------------------------------ */
+    /*  Generate PDF                                                        */
+    /* ------------------------------------------------------------------ */
+
+    public function gerarPdf(Proposta $proposta)
+    {
+        $proposta->load('cliente', 'itens');
+        
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('propostas.pdf', [
+            'proposta' => $proposta,
+            'statuses' => self::STATUSES,
+        ])->setPaper('a4', 'portrait');
+        
+        return $pdf->stream('Proposta_' . str_pad($proposta->id, 4, '0', STR_PAD_LEFT) . '.pdf');
+    }
+
+    /* ------------------------------------------------------------------ */
     /*  Helpers                                                             */
     /* ------------------------------------------------------------------ */
 
