@@ -1,12 +1,13 @@
 <?php
 
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PropostaController;
 use App\Http\Controllers\PropostaPublicaController;
 use Illuminate\Support\Facades\Route;
 
-// Home → propostas
-Route::get('/', fn() => redirect()->route('propostas.index'));
+// Home → Dashboard
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 // Propostas (CRUD interno)
 Route::resource('propostas', PropostaController::class);
@@ -21,6 +22,14 @@ Route::post('projetos/{projeto}/tarefas/reorder', [\App\Http\Controllers\TarefaC
 
 // Consulta Whois
 Route::post('whois', [\App\Http\Controllers\WhoisController::class, 'consultar'])->name('whois.consultar');
+
+// Faturas (CRUD + toggle pago + grupo + PDF)
+Route::resource('faturas', \App\Http\Controllers\FaturaController::class)->except(['show']);
+Route::patch('faturas/{fatura}/toggle-pago', [\App\Http\Controllers\FaturaController::class, 'togglePago'])->name('faturas.toggle-pago');
+Route::get('faturas/grupo/{grupo}/edit', [\App\Http\Controllers\FaturaController::class, 'editGrupo'])->name('faturas.grupo.edit');
+Route::put('faturas/grupo/{grupo}', [\App\Http\Controllers\FaturaController::class, 'updateGrupo'])->name('faturas.grupo.update');
+Route::delete('faturas/grupo/{grupo}', [\App\Http\Controllers\FaturaController::class, 'destroyGrupo'])->name('faturas.grupo.destroy');
+Route::get('faturas/{fatura}/pdf', [\App\Http\Controllers\FaturaController::class, 'pdf'])->name('faturas.pdf');
 
 // Gerar PDF da proposta
 Route::get('propostas/{proposta}/pdf', [PropostaController::class, 'gerarPdf'])
