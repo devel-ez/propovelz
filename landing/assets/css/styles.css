@@ -11,7 +11,7 @@
   --ink:          #0A0F1C;   /* fundo escuro (hero, rodapé) */
   --ink-2:        #111827;   /* fundo escuro secundário */
   --paper:        #FFFFFF;   /* fundo claro */
-  --paper-2:      #F6F8FC;   /* fundo claro alternado */
+  --paper-2:      #E9EFF8;   /* fundo claro alternado */
   --line:         #E5E9F0;   /* bordas no fundo claro */
   --line-dark:    rgba(255,255,255,.10);
 
@@ -121,7 +121,10 @@ code{
 .container-narrow{ max-width:var(--container-narrow); }
 
 .section{ padding-block:var(--section-y); }
-.section-alt{ background:var(--paper-2); }
+.section-alt{
+  background:var(--paper-2);
+  border-block:1px solid var(--line);
+}
 
 .section-head{ max-width:760px; margin-bottom:52px; }
 .section-head h2{ margin-bottom:16px; }
