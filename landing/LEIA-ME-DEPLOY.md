@@ -127,6 +127,27 @@ no bloco `:root`. Para mudar a identidade do site inteiro, altere só isto:
 
 ---
 
+### Cache do navegador — importante ao alterar CSS ou JS
+
+O CSS e o JS são carregados com um número de versão no `index.html`:
+
+```html
+<link rel="stylesheet" href="assets/css/styles.css?v=1">
+<script src="assets/js/main.js?v=1" defer></script>
+```
+
+A Hostinger envia `Cache-Control: max-age=604800` para arquivos estáticos — ou
+seja, **7 dias de cache no navegador do visitante**. Sem esse número, quem já
+visitou o site continua usando o CSS antigo por até uma semana: o HTML atualiza,
+o visual não, e parece que a alteração não funcionou.
+
+**Sempre que editar `styles.css` ou `main.js`, aumente o número** (`?v=1` →
+`?v=2` → `?v=3`). O HTML não entra em cache, então a troca aparece na hora.
+
+Para conferir sem depender disso, use uma aba anônima ou `Ctrl+F5`.
+
+---
+
 ## 6. Estrutura da página
 
 Cabeçalho + 9 seções + rodapé, na ordem:
