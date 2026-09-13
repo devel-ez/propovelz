@@ -341,8 +341,11 @@ code{
 
 .integrations{
   display:grid; gap:20px;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  grid-template-columns:repeat(4,1fr);
 }
+/* 4 cards: 4 ou 2 colunas — nunca sobra um sozinho */
+@media (max-width:1100px){ .integrations{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:620px){ .integrations{ grid-template-columns:1fr; } }
 .intg{
   background:var(--paper); border:1px solid var(--line);
   border-radius:var(--radius-lg); padding:26px 24px;
@@ -556,8 +559,10 @@ code{
 /* Grupos de itens dentro do card "Está incluso" */
 .mgroups{
   display:grid; gap:42px 34px;
-  grid-template-columns:repeat(auto-fit,minmax(248px,1fr));
+  grid-template-columns:repeat(3,1fr);
 }
+/* 5 grupos: 3+2 ou 1 por linha — 4 colunas deixariam 4+1 */
+@media (max-width:620px){ .mgroups{ grid-template-columns:1fr; } }
 .mgroup h4{
   font-size:.73rem; font-weight:800; letter-spacing:.09em; text-transform:uppercase;
   color:var(--ok); margin-bottom:13px;
@@ -594,8 +599,9 @@ code{
 
 .monthly-out ul{
   display:grid; gap:14px 32px;
-  grid-template-columns:repeat(auto-fit,minmax(238px,1fr));
+  grid-template-columns:repeat(3,1fr);
 }
+@media (max-width:720px){ .monthly-out ul{ grid-template-columns:1fr; } }
 .monthly-out li{
   position:relative; padding-left:27px;
   font-size:.91rem; color:var(--text-soft); line-height:1.55;
@@ -619,10 +625,12 @@ code{
 
 .steps{
   display:grid; gap:18px;
-  /* 196px permite as 5 etapas na mesma linha, sem sobrar a quinta */
-  grid-template-columns:repeat(auto-fit,minmax(196px,1fr));
+  grid-template-columns:repeat(5,1fr);
   margin-bottom:32px;
 }
+/* 5 etapas: 5 na mesma linha, 3+2, ou 1 — nunca 4+1 */
+@media (max-width:1080px){ .steps{ grid-template-columns:repeat(3,1fr); } }
+@media (max-width:720px){  .steps{ grid-template-columns:1fr; } }
 .steps li{
   position:relative;
   background:var(--paper); border:1px solid var(--line);
