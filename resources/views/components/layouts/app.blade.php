@@ -5,10 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'SaleHunt - Propostas' }}</title>
     
-    <!-- Scripts & Styles -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
-    <!-- TailwindCSS for preview/standalone execution (Remove if compiling via Vite) -->
+    <!--
+        Sem a diretiva de build de assets, de propósito.
+        O bundle do Vite não está no repositório (public/build é ignorado pelo
+        git) e, em produção, a diretiva lança "Vite manifest not found" — o painel
+        não abriria. Como o Tailwind e o Alpine já vêm de CDN logo abaixo, e
+        nenhuma view usa lodash nem axios, o bundle era redundante.
+        Para voltar a usar: rode `npm run build` e restaure a diretiva.
+    -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- AlpineJS for Interactions -->
@@ -216,19 +220,25 @@
             </div>
 
             <!-- User Profile -->
-            <div class="flex items-center justify-between pt-3 border-t border-slate-100">
-                <div class="flex items-center gap-3 cursor-pointer group">
+            <div class="flex items-center justify-between gap-2 pt-3 border-t border-slate-100">
+                <div class="flex items-center gap-3 min-w-0">
                     <div class="w-8 h-8 rounded-full overflow-hidden border border-slate-200 shadow-sm flex-shrink-0">
-                        <img src="https://ui-avatars.com/api/?name=Lukas+Lemos&background=020617&color=fff" alt="Lukas Lemos" class="w-full h-full object-cover">
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=020617&color=fff"
+                             alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-sm font-bold text-slate-800 group-hover:text-brand-600 transition-colors">Lukas Lemos</span>
-                        <span class="text-[10px] text-slate-500 truncate w-32">lukas@pipple.com.br</span>
+                    <div class="flex flex-col min-w-0">
+                        <span class="text-sm font-bold text-slate-800 truncate">{{ auth()->user()->name }}</span>
+                        <span class="text-[10px] text-slate-500 truncate">{{ auth()->user()->email }}</span>
                     </div>
                 </div>
-                <button class="text-slate-400 hover:text-danger-500 transition-colors p-1 rounded-md hover:bg-danger-50">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                </button>
+
+                <form method="POST" action="{{ route('logout') }}" class="flex-shrink-0">
+                    @csrf
+                    <button type="submit" title="Sair do painel" aria-label="Sair do painel"
+                            class="text-slate-400 hover:text-danger-500 transition-colors p-1 rounded-md hover:bg-danger-50 cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    </button>
+                </form>
             </div>
         </div>
     </aside>
