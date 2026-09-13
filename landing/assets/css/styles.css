@@ -385,9 +385,10 @@ code{
 
 .pricing{
   display:grid; gap:24px;
-  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
-  align-items:start;
+  grid-template-columns:repeat(3,1fr);
 }
+/* 3 planos: 3 colunas ou 1 — com 2 colunas um card sobraria sozinho */
+@media (max-width:1000px){ .pricing{ grid-template-columns:1fr; } }
 
 .price-card{
   position:relative;
@@ -456,6 +457,13 @@ code{
 }
 .price-month span{ color:var(--text-soft); font-weight:600; }
 .price-month strong{ color:var(--brand-600); font-weight:800; font-size:.95rem; }
+.price-foot{
+  font-size:.83rem; line-height:1.55; color:var(--text-soft);
+  padding-top:16px; margin-bottom:20px;
+  border-top:1px dashed var(--line);
+}
+.price-foot strong{ color:var(--text); font-weight:700; }
+
 .price-card .btn{ margin-top:auto; }
 
 /* ============================ DOMÍNIO / HOSPEDAGEM ============================ */
