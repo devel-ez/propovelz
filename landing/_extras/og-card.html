@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Gerador de og-image.jpg — Crie Sites Pro</title>
+<style>
+  /* ============================================================
+     COMO USAR
+     1. Abra este arquivo no Chrome.
+     2. F12 > Ctrl+Shift+M (modo dispositivo) > tamanho exato 1200 x 630.
+        (ou use uma extensão de captura "área exata")
+     3. Capture o retângulo de 1200x630, salve como og-image.jpg
+        e coloque em: landing/assets/img/og-image.jpg
+     Observação: ele já fica em escala 1:1 (1200x630), sem zoom.
+     ============================================================ */
+  html,body{ margin:0; padding:0; background:#334155; }
+  .card{
+    width:1200px; height:630px; position:relative; overflow:hidden;
+    background:#0A0F1C; color:#fff;
+    font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:0 92px 76px; box-sizing:border-box;
+  }
+  .grid{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+    background-size:56px 56px;
+    mask-image:radial-gradient(ellipse 80% 70% at 30% 40%, #000 40%, transparent 100%);
+    -webkit-mask-image:radial-gradient(ellipse 80% 70% at 30% 40%, #000 40%, transparent 100%);
+  }
+  .glow{ position:absolute; border-radius:50%; filter:blur(110px); }
+  .g1{ width:700px; height:700px; top:-300px; left:-160px; background:radial-gradient(circle, rgba(37,99,235,.85), transparent 68%); }
+  .g2{ width:560px; height:560px; bottom:-300px; right:-140px; background:radial-gradient(circle, rgba(6,182,212,.6), transparent 68%); }
+
+  .content{ position:relative; z-index:1; }
+
+  .brand{ display:flex; align-items:center; gap:16px; margin-bottom:44px; }
+  .mark{
+    width:56px; height:56px; border-radius:16px;
+    background:linear-gradient(135deg,#2563EB,#06B6D4);
+    display:grid; place-items:center;
+    box-shadow:0 10px 30px rgba(37,99,235,.45);
+  }
+  .mark svg{ width:34px; height:34px; }
+  .brand-name{ font-size:27px; font-weight:600; letter-spacing:-.02em; }
+  .brand-name strong{ font-weight:800; }
+
+  h1{
+    font-size:72px; line-height:1.08; letter-spacing:-.035em; font-weight:800;
+    margin:0 0 24px; max-width:900px;
+  }
+  h1 .grad{
+    background:linear-gradient(105deg,#60A5FA 0%,#22D3EE 52%,#A78BFA 100%);
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent; color:transparent;
+  }
+  p.sub{
+    font-size:26px; line-height:1.5; color:rgba(255,255,255,.7);
+    margin:0; max-width:830px; font-weight:500;
+  }
+  .bar{
+    position:absolute; left:92px; right:92px; bottom:52px; z-index:1;
+    display:flex; align-items:center; justify-content:space-between;
+    padding-top:24px; border-top:1px solid rgba(255,255,255,.12);
+    font-size:21px; color:rgba(255,255,255,.62); font-weight:600;
+  }
+  .bar .wa{ color:#4ADE80; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="grid"></div>
+  <div class="glow g1"></div>
+  <div class="glow g2"></div>
+
+  <div class="content">
+    <div class="brand">
+      <span class="mark">
+        <svg viewBox="0 0 64 64" fill="#fff" aria-hidden="true">
+          <path d="M13 24.5 32 12l19 12.5v4.3L32 16.3 13 28.8z"/>
+          <path d="M13 37.2 32 24.7l19 12.5v4.3L32 29 13 41.5z" opacity=".62"/>
+          <path d="M13 49.9 32 37.4l19 12.5V54L32 41.5 13 54z" opacity=".34"/>
+        </svg>
+      </span>
+      <span class="brand-name">Crie Sites <strong>Pro</strong></span>
+    </div>
+
+    <h1>Sites que vendem.<br>Em <span class="grad">código puro</span> ou WordPress.</h1>
+
+    <p class="sub">Landing pages, sites e sistemas sob medida — integrados a Google, Meta, RD Station e CRM.</p>
+  </div>
+
+  <div class="bar">
+    <span>criesitespro.com.br</span>
+    <span class="wa">WhatsApp +55 21 98064-9966</span>
+  </div>
+</div>
+</body>
+</html>

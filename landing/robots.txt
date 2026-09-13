@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# O script do bookmarklet de outro projeto mora na raiz desta hospedagem.
+# Bloqueamos apenas a indexação dele (nao o acesso): o navegador continua
+# carregando normalmente. Remove estas linhas se preferir deixa-lo indexavel.
+Disallow: /robo-compras.js
+
+Sitemap: https://criesitespro.com.br/sitemap.xml

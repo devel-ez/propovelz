@@ -1,0 +1,19 @@
+{
+  "name": "Crie Sites Pro",
+  "short_name": "Crie Sites Pro",
+  "description": "Criação de sites em código puro e WordPress, landing pages de alta conversão e funcionalidades personalizadas para empresas.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#0A0F1C",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
