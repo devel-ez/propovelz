@@ -462,7 +462,15 @@ code{
   background:var(--paper); border:1px solid var(--line);
   border-radius:var(--radius-lg); padding:30px 28px;
   box-shadow:var(--shadow-sm);
+  overflow:hidden;
 }
+
+/* Ilustração no topo do card, sangrando até as bordas */
+.explain-art{ margin:-30px -28px 24px; }
+.explain-art svg{ display:block; width:100%; height:auto; }
+.explain-art-azul{ background:linear-gradient(160deg,#F8FAFF,#EAF2FF); }
+.explain-art-violeta{ background:linear-gradient(160deg,#FCFAFF,#F3EFFF); }
+
 .explain-tag{
   display:inline-block; margin-bottom:14px;
   font-size:.73rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
@@ -804,6 +812,7 @@ code{
   .hero-facts li:last-child{ border-bottom:0; padding-bottom:0; }
   .hero-facts strong{ font-size:1.15rem; }
   .price-card, .card, .intg, .explain-card, .monthly-card{ padding:26px 22px; }
+  .explain-art{ margin:-26px -22px 20px; }
   .callout{ flex-direction:column; gap:14px; padding:22px; }
   .cta-final{ padding-block:70px; }
   .site-footer{ padding-top:52px; }
