@@ -1,45 +1,77 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FaturaController;
+use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\PropostaController;
 use App\Http\Controllers\PropostaPublicaController;
+use App\Http\Controllers\TarefaController;
+use App\Http\Controllers\WhoisController;
 use Illuminate\Support\Facades\Route;
 
-// Home → Dashboard
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+/*
+|--------------------------------------------------------------------------
+| Autenticação
+|--------------------------------------------------------------------------
+| Sem estas três rotas o painel fica aberto para qualquer visitante — e ele
+| guarda as credenciais dos clientes (tabela cliente_credenciais).
+| A rota GET precisa se chamar "login": o middleware Authenticate
+| redireciona para route('login') quando alguém não está autenticado.
+*/
+Route::get('login',   [LoginController::class, 'show'])->name('login');
+Route::post('login',  [LoginController::class, 'login'])->name('login.attempt');
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-// Propostas (CRUD interno)
-Route::resource('propostas', PropostaController::class);
+/*
+|--------------------------------------------------------------------------
+| Área restrita — tudo aqui exige estar logado
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
 
-// Clientes (CRUD)
-Route::resource('clientes', ClienteController::class);
+    // Home → Dashboard
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-// Projetos (CRUD + Kanban)
-Route::resource('projetos', \App\Http\Controllers\ProjetoController::class);
-Route::resource('projetos.tarefas', \App\Http\Controllers\TarefaController::class)->except(['index', 'create', 'show', 'edit']);
-Route::post('projetos/{projeto}/tarefas/reorder', [\App\Http\Controllers\TarefaController::class, 'reorder'])->name('projetos.tarefas.reorder');
+    // Propostas (CRUD interno)
+    Route::resource('propostas', PropostaController::class);
 
-// Consulta Whois
-Route::post('whois', [\App\Http\Controllers\WhoisController::class, 'consultar'])->name('whois.consultar');
+    // Clientes (CRUD)
+    Route::resource('clientes', ClienteController::class);
 
-// Faturas (CRUD + toggle pago + grupo + PDF)
-Route::resource('faturas', \App\Http\Controllers\FaturaController::class)->except(['show']);
-Route::patch('faturas/{fatura}/toggle-pago', [\App\Http\Controllers\FaturaController::class, 'togglePago'])->name('faturas.toggle-pago');
-Route::get('faturas/grupo/{grupo}/edit', [\App\Http\Controllers\FaturaController::class, 'editGrupo'])->name('faturas.grupo.edit');
-Route::put('faturas/grupo/{grupo}', [\App\Http\Controllers\FaturaController::class, 'updateGrupo'])->name('faturas.grupo.update');
-Route::delete('faturas/grupo/{grupo}', [\App\Http\Controllers\FaturaController::class, 'destroyGrupo'])->name('faturas.grupo.destroy');
-Route::get('faturas/{fatura}/pdf', [\App\Http\Controllers\FaturaController::class, 'pdf'])->name('faturas.pdf');
+    // Projetos (CRUD + Kanban)
+    Route::resource('projetos', ProjetoController::class);
+    Route::resource('projetos.tarefas', TarefaController::class)->except(['index', 'create', 'show', 'edit']);
+    Route::post('projetos/{projeto}/tarefas/reorder', [TarefaController::class, 'reorder'])->name('projetos.tarefas.reorder');
 
-// Gerar PDF da proposta
-Route::get('propostas/{proposta}/pdf', [PropostaController::class, 'gerarPdf'])
-    ->name('propostas.pdf');
+    // Consulta Whois
+    Route::post('whois', [WhoisController::class, 'consultar'])->name('whois.consultar');
 
-// Gerar link público de uma proposta
-Route::post('propostas/{proposta}/gerar-link', [PropostaController::class, 'gerarLink'])
-    ->name('propostas.gerar-link');
+    // Faturas (CRUD + toggle pago + grupo + PDF)
+    Route::resource('faturas', FaturaController::class)->except(['show']);
+    Route::patch('faturas/{fatura}/toggle-pago', [FaturaController::class, 'togglePago'])->name('faturas.toggle-pago');
+    Route::get('faturas/grupo/{grupo}/edit', [FaturaController::class, 'editGrupo'])->name('faturas.grupo.edit');
+    Route::put('faturas/grupo/{grupo}', [FaturaController::class, 'updateGrupo'])->name('faturas.grupo.update');
+    Route::delete('faturas/grupo/{grupo}', [FaturaController::class, 'destroyGrupo'])->name('faturas.grupo.destroy');
+    Route::get('faturas/{fatura}/pdf', [FaturaController::class, 'pdf'])->name('faturas.pdf');
 
-// Rotas públicas (sem autenticação) — acesso do cliente
+    // Gerar PDF da proposta
+    Route::get('propostas/{proposta}/pdf', [PropostaController::class, 'gerarPdf'])
+        ->name('propostas.pdf');
+
+    // Gerar link público de uma proposta
+    Route::post('propostas/{proposta}/gerar-link', [PropostaController::class, 'gerarLink'])
+        ->name('propostas.gerar-link');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Rotas públicas — acesso do cliente, SEM autenticação
+|--------------------------------------------------------------------------
+| O cliente abre o link da proposta e assina. Se estas rotas entrarem no
+| grupo acima, todo link de proposta já enviado deixa de funcionar.
+*/
 Route::get('/p/{token}', [PropostaPublicaController::class, 'show'])
     ->name('propostas.publica');
 
