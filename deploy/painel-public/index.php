@@ -5,7 +5,8 @@
  *
  * Endereço: https://criesitespro.com.br/painel
  *
- * A APLICAÇÃO LARAVEL FICA FORA DESTA PASTA, em /home/u355084043/propovelz.
+ * A APLICAÇÃO LARAVEL FICA FORA DESTA PASTA, em
+ * /home/u355084043/domains/criesitespro.com.br/propovelz (irmã do public_html).
  * Só este diretório é exposto pela web — por isso o .env, o vendor/ e o app/
  * nunca ficam alcançáveis por uma requisição HTTP.
  *
@@ -17,7 +18,7 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-$appPath = '/home/u355084043/propovelz';
+$appPath = '/home/u355084043/domains/criesitespro.com.br/propovelz';
 
 if (! is_file($appPath.'/vendor/autoload.php')) {
     http_response_code(500);
