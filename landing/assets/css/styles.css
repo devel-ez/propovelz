@@ -304,7 +304,8 @@ code{
 
 .cards{
   display:grid; gap:22px;
-  grid-template-columns:repeat(auto-fit,minmax(268px,1fr));
+  /* 380px forca 2 colunas (grade 2x2) em vez de 3+1 com card orfao */
+  grid-template-columns:repeat(auto-fit,minmax(380px,1fr));
 }
 
 .card{
@@ -618,7 +619,8 @@ code{
 
 .steps{
   display:grid; gap:18px;
-  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  /* 196px permite as 5 etapas na mesma linha, sem sobrar a quinta */
+  grid-template-columns:repeat(auto-fit,minmax(196px,1fr));
   margin-bottom:32px;
 }
 .steps li{
