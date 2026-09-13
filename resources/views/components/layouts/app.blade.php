@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ?? 'SaleHunt - Propostas' }}</title>
+    <title>{{ $title ?? 'Crie Sites Pro - Painel' }}</title>
     
     <!--
         Sem a diretiva de build de assets, de propósito.
@@ -76,14 +76,15 @@
         <div class="flex-1 overflow-y-auto overflow-x-hidden pt-4 pb-6 px-4">
             <!-- Header/Logo Area -->
             <div class="flex items-center justify-between mb-6 px-2">
-                <a href="/" class="flex items-center gap-2 text-brand-600 font-bold text-xl tracking-tight">
-                    <div class="w-8 h-8 bg-brand-600 text-white rounded-lg flex items-center justify-center font-black">
-                        <!-- Custom icon approximating the image logo -->
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 font-bold text-xl tracking-tight">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-cyan-500 text-white flex items-center justify-center shadow-sm flex-shrink-0">
+                        <svg class="w-5 h-5" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
+                            <path d="M6 12.5 16 6l10 6.5v2.2L16 8.2 6 14.7v-2.2Z"/>
+                            <path d="M6 19.4 16 12.9l10 6.5v2.2L16 15.1 6 21.6v-2.2Z" opacity=".6"/>
+                            <path d="M6 25.8 16 19.3l10 6.5V28L16 21.5 6 28v-2.2Z" opacity=".35"/>
                         </svg>
                     </div>
-                    SaleHunt
+                    <span class="text-slate-800">Crie Sites <span class="text-brand-600">Pro</span></span>
                 </a>
                 <button class="text-slate-400 hover:text-slate-600 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +101,7 @@
                         <div class="w-6 h-6 bg-slate-900 rounded-md flex items-center justify-center text-white text-[10px] font-bold">
                             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>
                         </div>
-                        <span class="text-sm font-semibold text-slate-700 group-hover:text-slate-900">Studio Pipple</span>
+                        <span class="text-sm font-semibold text-slate-700 group-hover:text-slate-900">Crie Sites Pro</span>
                     </div>
                     <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
@@ -129,21 +130,21 @@
                     </div>
                 </a>
 
-                <a href="{{ route('propostas.index') }}" class="flex items-center justify-between px-3 py-2.5 {{ request()->routeIs('propostas.*') ? 'bg-brand-600 text-white shadow-sm shadow-brand-200' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }} rounded-xl transition-colors group">
-                    <div class="flex items-center gap-3">
-                        <svg class="w-5 h-5 {{ request()->routeIs('propostas.*') ? 'text-white' : 'text-slate-400 group-hover:text-brand-500' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <span class="text-sm font-medium">Propostas</span>
-                    </div>
-                </a>
-
                 <a href="{{ route('clientes.index') }}" class="flex items-center justify-between px-3 py-2.5 {{ request()->routeIs('clientes.*') ? 'bg-brand-600 text-white shadow-sm shadow-brand-200' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }} rounded-xl transition-colors group">
                     <div class="flex items-center gap-3">
                         <svg class="w-5 h-5 {{ request()->routeIs('clientes.*') ? 'text-white' : 'text-slate-400 group-hover:text-brand-500' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                         <span class="text-sm font-medium">Clientes</span>
+                    </div>
+                </a>
+
+                <a href="{{ route('propostas.index') }}" class="flex items-center justify-between px-3 py-2.5 {{ request()->routeIs('propostas.*') ? 'bg-brand-600 text-white shadow-sm shadow-brand-200' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900' }} rounded-xl transition-colors group">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-5 h-5 {{ request()->routeIs('propostas.*') ? 'text-white' : 'text-slate-400 group-hover:text-brand-500' }} transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span class="text-sm font-medium">Propostas</span>
                     </div>
                 </a>
 
@@ -195,30 +196,6 @@
 
         <!-- Bottom Section -->
         <div class="px-4 pb-4 pt-2 bg-white">
-            <!-- Upgrade Banner -->
-            <div class="mb-4 bg-brand-50 border border-brand-100 rounded-xl p-3 relative overflow-hidden group">
-                <div class="absolute top-0 right-0 p-1">
-                    <button class="text-brand-300 hover:text-brand-500 transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                    </button>
-                </div>
-                <h4 class="text-sm font-bold text-slate-800 mb-1">Plano free</h4>
-                <p class="text-[11px] text-slate-500 mb-2 leading-relaxed">Seu teste irá expirar em breve.</p>
-                <a href="#" class="text-[12px] font-semibold text-brand-600 hover:text-brand-700 hover:underline">Atualizar plano</a>
-            </div>
-
-            <!-- Footer Links -->
-            <div class="space-y-0.5 mb-4">
-                <a href="#" class="flex items-center gap-3 px-2 py-1.5 text-slate-500 hover:text-slate-800 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.618 5.984A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016zM12 9v2m0 4h.01"/></svg>
-                    <span class="text-xs font-medium">Reportar Bug</span>
-                </a>
-                <a href="#" class="flex items-center gap-3 px-2 py-1.5 text-slate-500 hover:text-slate-800 transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                    <span class="text-xs font-medium">Suporte</span>
-                </a>
-            </div>
-
             <!-- User Profile -->
             <div class="flex items-center justify-between gap-2 pt-3 border-t border-slate-100">
                 <div class="flex items-center gap-3 min-w-0">
