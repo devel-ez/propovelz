@@ -66,12 +66,27 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
         }
+        /* Evita o menu aparecer por um instante antes do Alpine iniciar */
+        [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="bg-[#F3F4F6] text-slate-800 antialiased h-screen overflow-hidden flex selection:bg-brand-100 selection:text-brand-700">
+<body x-data="{ menu: true }" class="bg-[#F3F4F6] text-slate-800 antialiased h-screen overflow-hidden flex selection:bg-brand-100 selection:text-brand-700">
 
-    <!-- Sidebar Layout -->
-    <aside class="w-[260px] bg-white border-r border-slate-200 flex flex-col justify-between h-full flex-shrink-0 relative z-20">
+    <!-- Botão para reabrir o menu: só aparece com a barra recolhida -->
+    <button x-cloak x-show="!menu" @click="menu = true"
+            type="button" title="Abrir menu" aria-label="Abrir menu"
+            class="fixed top-4 left-4 z-30 w-10 h-10 rounded-xl bg-white border border-slate-200 shadow-sm
+                   text-slate-500 hover:text-slate-800 grid place-items-center transition-colors cursor-pointer">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+    </button>
+
+    <!-- Sidebar Layout
+         Sem x-cloak de propósito: o estado inicial é aberto, então se o Alpine
+         não carregar (CDN fora do ar) o menu continua visível em vez de sumir. -->
+    <aside x-show="menu"
+           class="w-[260px] bg-white border-r border-slate-200 flex flex-col justify-between h-full flex-shrink-0 relative z-20">
         <!-- Top Section -->
         <div class="flex-1 overflow-y-auto overflow-x-hidden pt-4 pb-6 px-4">
             <!-- Header/Logo Area -->
@@ -86,25 +101,11 @@
                     </div>
                     <span class="text-slate-800">Crie Sites <span class="text-brand-600">Pro</span></span>
                 </a>
-                <button class="text-slate-400 hover:text-slate-600 transition-colors">
+                <button type="button" @click="menu = false"
+                        title="Recolher menu" aria-label="Recolher menu"
+                        class="text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer p-1 rounded-md">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Workspace Selector -->
-            <div class="mb-5">
-                <span class="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">Workspace</span>
-                <button class="w-full flex items-center justify-between px-3 py-2 border border-slate-200 rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all bg-white shadow-sm group">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-6 h-6 bg-slate-900 rounded-md flex items-center justify-center text-white text-[10px] font-bold">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>
-                        </div>
-                        <span class="text-sm font-semibold text-slate-700 group-hover:text-slate-900">Crie Sites Pro</span>
-                    </div>
-                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/>
                     </svg>
                 </button>
             </div>
@@ -166,32 +167,6 @@
                     </div>
                 </a>
             </nav>
-
-            <!-- Resources Navigation -->
-            <nav class="space-y-1">
-                <span class="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 block">Recursos</span>
-                
-                <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors group">
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <span class="text-sm font-medium">Assinatura</span>
-                </a>
-
-                <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors group">
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2 2 0 00-.586-1.414l-4.5-4.5A2 2 0 0015.086 3H15m-4 1h4m-4 5h4m-4 5h4" />
-                    </svg>
-                    <span class="text-sm font-medium">Novidades</span>
-                </a>
-
-                <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-colors group">
-                    <svg class="w-5 h-5 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span class="text-sm font-medium">Enviar sugestão</span>
-                </a>
-            </nav>
         </div>
 
         <!-- Bottom Section -->
@@ -221,7 +196,7 @@
     </aside>
 
     <!-- Main Content Area -->
-    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative" :class="menu ? '' : 'pt-14'">
         <!-- Content wrapper for scroll -->
         <div class="flex-1 overflow-y-auto w-full p-8">
             {{ $slot }}
