@@ -10,6 +10,16 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div id="flash-error"
+             class="fixed top-5 right-5 z-50 flex items-start gap-3 bg-red-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium max-w-lg">
+            <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            </svg>
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
     @php
         $estilos = [
             'vencido'  => ['classe' => 'bg-red-100 text-red-700 border-red-200',           'rotulo' => 'Vencido'],
@@ -30,17 +40,34 @@
                 </p>
             </div>
 
-            <a href="{{ route('hospedagens.index', $incluirInativos ? [] : ['inativos' => 1]) }}"
-               class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl border transition-colors whitespace-nowrap
-                      {{ $incluirInativos
-                            ? 'bg-slate-800 border-slate-800 text-white hover:bg-slate-700'
-                            : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50' }}">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                </svg>
-                {{ $incluirInativos ? 'Ocultar clientes inativos' : 'Mostrar clientes inativos' }}
-            </a>
+            <div class="flex items-center gap-2 flex-wrap">
+                {{-- Um domínio só precisa de um comando para trazer a data certa
+                     do registro. Hospedagem não tem essa fonte: depende do
+                     comprovante, por isso só dá para digitar. --}}
+                <form method="POST" action="{{ route('hospedagens.dominios.todos') }}"
+                      onsubmit="return confirm('Consultar o whois de todos os domínios? Pode levar alguns segundos.')">
+                    @csrf
+                    <button type="submit"
+                            class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl border bg-indigo-600 border-indigo-600 text-white hover:bg-indigo-700 transition-colors whitespace-nowrap">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Atualizar todos os domínios
+                    </button>
+                </form>
+
+                <a href="{{ route('hospedagens.index', $incluirInativos ? [] : ['inativos' => 1]) }}"
+                   class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl border transition-colors whitespace-nowrap
+                          {{ $incluirInativos
+                                ? 'bg-slate-800 border-slate-800 text-white hover:bg-slate-700'
+                                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50' }}">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                    {{ $incluirInativos ? 'Ocultar clientes inativos' : 'Mostrar clientes inativos' }}
+                </a>
+            </div>
         </div>
 
         {{-- Resumo --}}
@@ -106,6 +133,7 @@
                                 <th class="text-left font-semibold text-slate-500 px-4 py-3.5">Descrição</th>
                                 <th class="text-left font-semibold text-slate-500 px-4 py-3.5">Vencimento</th>
                                 <th class="text-left font-semibold text-slate-500 px-4 py-3.5">Situação</th>
+                                <th class="text-left font-semibold text-slate-500 px-4 py-3.5">Ações</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
@@ -166,6 +194,45 @@
                                         <span class="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-lg border {{ $e['classe'] }}">
                                             {{ $e['rotulo'] }}
                                         </span>
+                                    </td>
+
+                                    {{-- Ações: a data é sempre digitável; o domínio
+                                         ainda pode ser buscado no whois. --}}
+                                    <td class="px-4 py-4">
+                                        <div class="flex items-center gap-1.5">
+                                            <form method="POST"
+                                                  action="{{ $item['tipo'] === 'Domínio'
+                                                        ? route('hospedagens.dominio', $item['projeto']->id)
+                                                        : route('hospedagens.hospedagem', $item['projeto']->id) }}"
+                                                  class="flex items-center gap-1.5">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input type="date" name="vigencia"
+                                                       value="{{ $item['vigencia']?->format('Y-m-d') }}"
+                                                       title="Vencimento (deixe vazio para remover)"
+                                                       class="text-xs border border-slate-200 rounded-lg px-2 py-1.5 text-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-100 focus:border-brand-400 w-[8.6rem]">
+                                                <button type="submit" title="Salvar vencimento"
+                                                        class="p-1.5 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors cursor-pointer">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+
+                                            @if($item['tipo'] === 'Domínio')
+                                                <form method="POST"
+                                                      action="{{ route('hospedagens.dominio.whois', $item['projeto']->id) }}"
+                                                      onsubmit="this.querySelector('button').disabled = true">
+                                                    @csrf
+                                                    <button type="submit" title="Buscar a data no whois"
+                                                            class="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer disabled:opacity-40">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                                        </svg>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

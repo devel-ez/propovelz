@@ -62,6 +62,21 @@ Route::middleware('auth')->group(function () {
     // Hospedagens e domínios (vencimentos)
     Route::get('hospedagens', [HospedagemController::class, 'index'])->name('hospedagens.index');
 
+    // Atualizar todos vem antes das rotas com {projeto}: 'dominios' também
+    // casaria com o curinga, e a primeira que casar é a que vale.
+    Route::post('hospedagens/dominios/whois-todos', [HospedagemController::class, 'atualizarTodosDominios'])
+        ->name('hospedagens.dominios.todos');
+
+    // Vencimento digitado à mão: hospedagem não tem de onde buscar a data
+    Route::patch('hospedagens/{projeto}/hospedagem', [HospedagemController::class, 'salvarHospedagem'])
+        ->name('hospedagens.hospedagem');
+    Route::patch('hospedagens/{projeto}/dominio', [HospedagemController::class, 'salvarDominio'])
+        ->name('hospedagens.dominio');
+
+    // Busca no whois a data de um domínio
+    Route::post('hospedagens/{projeto}/dominio/whois', [HospedagemController::class, 'atualizarDominio'])
+        ->name('hospedagens.dominio.whois');
+
     // Lixeira: recuperar o que foi excluído, ou apagar de vez
     Route::get('lixeira', [LixeiraController::class, 'index'])->name('lixeira.index');
     Route::patch('lixeira/{tipo}/{id}/restaurar', [LixeiraController::class, 'restaurar'])->name('lixeira.restaurar');

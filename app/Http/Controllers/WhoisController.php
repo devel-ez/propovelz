@@ -2,62 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\ConsultaWhois;
 use Illuminate\Http\Request;
-use Iodev\Whois\Factory;
 
+/**
+ * Consulta avulsa, usada pelo formulário de projeto: o botão que preenche a
+ * data de vencimento enquanto o projeto é cadastrado.
+ *
+ * A lógica de consulta mora em App\Support\ConsultaWhois porque a tela de
+ * Hospedagens também precisa dela - para atualizar um domínio só e para
+ * atualizar todos de uma vez.
+ */
 class WhoisController extends Controller
 {
     public function consultar(Request $request)
     {
-        $domain = $request->input('domain');
+        $dominio = ConsultaWhois::limpar($request->input('domain'));
 
-        if (!$domain) {
+        if ($dominio === '') {
             return response()->json(['error' => 'Domínio não informado.'], 400);
         }
 
-        try {
-            $domain = trim($domain);
-            $domain = preg_replace('/^https?:\/\//', '', $domain);
-            $domain = preg_replace('/^www\./', '', $domain);
-            $domain = explode('/', $domain)[0];
+        $data = ConsultaWhois::expiracao($dominio);
 
-            $expiresAt = null;
-
-            if (str_ends_with($domain, '.br')) {
-                // RDAP Registro.br
-                $response = \Illuminate\Support\Facades\Http::withoutVerifying()->timeout(10)->get("https://rdap.registro.br/domain/{$domain}");
-                if ($response->successful()) {
-                    $data = $response->json();
-                    if (isset($data['events'])) {
-                        foreach ($data['events'] as $event) {
-                            if ($event['eventAction'] === 'expiration') {
-                                $expiresAt = \Carbon\Carbon::parse($event['eventDate'])->format('Y-m-d');
-                                break;
-                            }
-                        }
-                    }
-                }
-            } else {
-                // Para outros, tenta usar o pacote, porém com timeout
-                $whois = Factory::get()->createWhois();
-                $info = $whois->loadDomainInfo($domain);
-                if ($info) {
-                    $expiresAt = date("Y-m-d", $info->expirationDate);
-                }
-            }
-
-            if (!$expiresAt) {
-                return response()->json(['error' => 'Não foi possível obter a data de expiração deste domínio.'], 404);
-            }
-
+        if (! $data) {
             return response()->json([
-                'domain' => $domain,
-                'expires_at' => $expiresAt
-            ]);
-
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error("Whois error for $domain: " . $e->getMessage());
-            return response()->json(['error' => 'Erro ao consultar domínio: ' . $e->getMessage()], 500);
+                'error' => 'Não foi possível obter a data de expiração deste domínio.',
+            ], 404);
         }
+
+        return response()->json([
+            'domain'     => $dominio,
+            'expires_at' => $data->format('Y-m-d'),
+        ]);
     }
 }
