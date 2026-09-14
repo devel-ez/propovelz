@@ -5,6 +5,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FaturaController;
 use App\Http\Controllers\HospedagemController;
+use App\Http\Controllers\LixeiraController;
 use App\Http\Controllers\ProjetoAnotacaoController;
 use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\PropostaController;
@@ -58,6 +59,12 @@ Route::middleware('auth')->group(function () {
 
     // Hospedagens e domínios (vencimentos)
     Route::get('hospedagens', [HospedagemController::class, 'index'])->name('hospedagens.index');
+
+    // Lixeira: recuperar o que foi excluído, ou apagar de vez
+    Route::get('lixeira', [LixeiraController::class, 'index'])->name('lixeira.index');
+    Route::patch('lixeira/{tipo}/{id}/restaurar', [LixeiraController::class, 'restaurar'])->name('lixeira.restaurar');
+    Route::delete('lixeira/{tipo}/{id}', [LixeiraController::class, 'destruir'])->name('lixeira.destruir');
+    Route::delete('lixeira', [LixeiraController::class, 'esvaziar'])->name('lixeira.esvaziar');
 
     // Consulta Whois
     Route::post('whois', [WhoisController::class, 'consultar'])->name('whois.consultar');
