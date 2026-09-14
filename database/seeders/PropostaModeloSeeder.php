@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace Database\Seeders;
 
@@ -30,6 +30,26 @@ class PropostaModeloSeeder extends Seeder
     }
 
     /**
+     * Cria (ou atualiza) SOMENTE o modelo de manutenção com hospedagem do
+     * cliente, sem tocar nos demais.
+     *
+     * Existe porque rodar o seeder inteiro passa updateOrCreate em todos os
+     * modelos e sobrescreveria qualquer ajuste feito à mão no painel. Usado
+     * quando se quer acrescentar um modelo sem mexer nos que já existem.
+     */
+    public function somenteManutencaoHospedagemCliente(): string
+    {
+        $titulo = 'Contrato de Manutenção - hospedagem por conta do cliente';
+
+        PropostaModelo::updateOrCreate(
+            ['titulo' => $titulo],
+            ['conteudo' => $this->contratoManutencaoHospedagemCliente()]
+        );
+
+        return $titulo;
+    }
+
+    /**
      * @return array<int, array{titulo: string, conteudo: string}>
      */
     private function modelos(): array
@@ -42,6 +62,10 @@ class PropostaModeloSeeder extends Seeder
             [
                 'titulo' => 'Escopo - Landing Page (plano Só o site)',
                 'conteudo' => $this->escopoSite(),
+            ],
+            [
+                'titulo' => 'Contrato de Manutenção - hospedagem por conta do cliente',
+                'conteudo' => $this->contratoManutencaoHospedagemCliente(),
             ],
         ];
     }
@@ -218,6 +242,137 @@ HTML;
 <li>Você revisa com calma e ajustamos o que precisar, dentro do escopo</li>
 <li>Publicamos e configuramos as integrações</li>
 </ol>
+HTML;
+    }
+
+    /* ------------------------------------------------------------------ */
+
+    /**
+     * Manutenção sem hospedagem: a Contratante paga hospedagem e domínio.
+     *
+     * Os negritos marcam o que o cliente precisa achar de relance: valores,
+     * prazos, o que não está incluso e as obrigações dele.
+     */
+    private function contratoManutencaoHospedagemCliente(): string
+    {
+        return <<<'HTML'
+<p><strong>Contratada:</strong> Crie Sites Pro - criesitespro.com.br - contato@criesitespro.com.br - WhatsApp (21) 98064-9966</p>
+<p><strong>Contratante:</strong> [NOME OU RAZÃO SOCIAL], [CPF/CNPJ], [ENDEREÇO]</p>
+<p><strong>Site objeto deste contrato:</strong> [DOMÍNIO]</p>
+
+<h2>1. Objeto</h2>
+<p>Prestação de serviços de <strong>manutenção contínua e suporte</strong> do Site indicado acima.</p>
+<p>O serviço é <strong>contínuo</strong>: não tem prazo de encerramento automático. Vigora enquanto as partes assim quiserem.</p>
+
+<h2>2. O que está incluso</h2>
+<p><strong>Manutenção</strong></p>
+<ul>
+<li>Acompanhamento contínuo e correção de falhas</li>
+<li>Atualização de bibliotecas, dependências, temas e plugins</li>
+<li>Backups periódicos do Site e do conteúdo</li>
+<li>Atualização de integrações quando solicitado</li>
+</ul>
+<p><strong>Segurança</strong></p>
+<ul>
+<li>Aplicação das correções de segurança assim que publicadas</li>
+<li>Monitoramento de acessos suspeitos e da integridade do Site</li>
+<li>Firewall e camada anti-malware ativos</li>
+</ul>
+<p><strong>Performance</strong></p>
+<ul>
+<li>Testes periódicos de velocidade e Core Web Vitals</li>
+<li>Otimização contínua de imagens, cache e ajustes de carregamento</li>
+</ul>
+<p><strong>Conteúdo e suporte</strong></p>
+<ul>
+<li>Alteração de textos, imagens e vídeos</li>
+<li>Ajustes simples de design: cores, espaçamentos e ordem de elementos</li>
+<li>Suporte direto pelo WhatsApp (21) 98064-9966, com quem construiu o Site</li>
+</ul>
+<p><strong>2.1</strong> As medidas de segurança e os backups <strong>dependem dos recursos oferecidos pela hospedagem</strong> contratada pela Contratante. A Contratada aplica o que a hospedagem permitir e <strong>não responde por limitações dela</strong>.</p>
+
+<h2>3. O que não está incluso</h2>
+<p>Dependem de <strong>proposta à parte</strong>:</p>
+<ul>
+<li>Novas funcionalidades: áreas de cliente, cálculos, módulos</li>
+<li>Mudanças complexas de design: redesenho de páginas ou do layout</li>
+<li>Novas páginas e sistemas: ampliação do escopo original</li>
+</ul>
+<p>A <strong>publicação de conteúdo editorial</strong> - posts, newsletters, artigos e similares - <strong>não está inclusa</strong>. Caso a Contratante queira publicar por conta própria, será necessária uma plataforma de gestão de conteúdo, também objeto de proposta à parte.</p>
+<p>Não estão inclusos os <strong>custos de hospedagem e domínio</strong>, que correm <strong>por conta da Contratante</strong>, conforme a cláusula 7.</p>
+<p>Nesses casos a Contratada avalia o esforço, envia proposta com escopo, prazo e valor por escrito, e <strong>nada é executado sem a aprovação da Contratante</strong>.</p>
+
+<h2>4. Valores e forma de pagamento</h2>
+<p>Mensalidade: <strong>R$ 150,00</strong> (cento e cinquenta reais) por mês.</p>
+<p>A mensalidade começa a contar <strong>30 (trinta) dias após a assinatura</strong> desta proposta.</p>
+<p><strong>Forma de pagamento:</strong> Pix, avulso ou recorrente, ou plano recorrente via Mercado Pago, onde a Contratante escolhe a forma de pagamento de sua preferência.</p>
+<p>O pagamento deve ocorrer <strong>até o dia [DIA] de cada mês</strong>.</p>
+
+<h2>5. Vigência e rescisão</h2>
+<p>Ambas as partes poderão rescindir o presente contrato, <strong>sem qualquer ônus</strong>, a qualquer momento. Para isso, é necessário <strong>aviso prévio mínimo de 30 (trinta) dias</strong> antes da data do próximo pagamento.</p>
+
+<h2>6. Propriedade</h2>
+<p><strong>Pertencem à Contratante, desde o início:</strong></p>
+<ul>
+<li>O domínio do Site</li>
+<li>Os textos, imagens e vídeos que ela forneceu ou aprovou</li>
+<li>O conteúdo publicado no Site</li>
+<li>Os arquivos de código, o layout e os elementos de design desenvolvidos</li>
+</ul>
+
+<h2>7. Hospedagem e domínio</h2>
+<p>A hospedagem corre <strong>por conta da Contratante</strong>, que responde pela contratação, manutenção e renovação.</p>
+<p>O domínio é registrado <strong>em nome da Contratante</strong> desde o início, cabendo à Contratante o pagamento do registro e das renovações anuais.</p>
+
+<h2>8. Obrigações da Contratante</h2>
+<ul>
+<li>Fornecer, em tempo hábil, os textos, imagens, vídeos, logotipo e demais conteúdos necessários</li>
+<li>Garantir que o material fornecido <strong>não viola direitos de terceiros</strong> (direito autoral, marca, imagem), respondendo por eventuais reclamações</li>
+<li>Indicar um responsável pelas aprovações, para dar agilidade às decisões</li>
+<li>Aprovar ou solicitar ajustes dentro do prazo combinado</li>
+<li>Manter os dados de acesso ao Site em sigilo</li>
+<li><strong>Manter a hospedagem e o domínio contratados, ativos e pagos</strong>, respondendo pela renovação e pelas consequências de eventual interrupção</li>
+<li><strong>Fornecer e manter atualizados os acessos</strong> necessários à manutenção, incluindo hospedagem, painel do Site e demais serviços envolvidos</li>
+</ul>
+
+<h2>9. Prazos e suporte</h2>
+<p><strong>Resposta:</strong> a Contratada responde às solicitações em até <strong>1 (um) dia útil</strong>.</p>
+<p><strong>Execução:</strong> o prazo de execução é definido conforme a complexidade e a necessidade de cada solicitação, e informado à Contratante no momento do pedido. Fica acordado que as alterações e manutenções serão realizadas <strong>aos sábados</strong>.</p>
+
+<h2>10. Alterações de conteúdo</h2>
+<p><strong>Não há limite de quantidade</strong> para troca de textos, imagens e vídeos, observado o <strong>princípio da razoabilidade</strong> e a natureza deste contrato.</p>
+<p>Este contrato tem por objeto o <strong>desenvolvimento e a manutenção de site</strong>, e <strong>não a produção de conteúdo</strong>. Não estão inclusas:</p>
+<ul>
+<li>Redação de artigos, posts ou materiais editoriais</li>
+<li>Newsletters e campanhas de e-mail marketing</li>
+<li>Gestão de redes sociais</li>
+<li>Produção recorrente ou em volume de material de marketing</li>
+</ul>
+<p>Essas atividades são de <strong>responsabilidade da Contratante</strong>.</p>
+
+<h2>11. Inadimplência</h2>
+<p>Havendo atraso no pagamento da mensalidade, a Contratada <strong>enviará comunicação à Contratante</strong> informando o débito e solicitando a regularização.</p>
+<p>Não havendo regularização, a Contratada poderá <strong>interromper os serviços de manutenção 30 (trinta) dias após o envio do aviso</strong>, ficando o Site sob responsabilidade exclusiva da Contratante.</p>
+<p>Regularizado o débito, os serviços são retomados em até <strong>3 (três) dias úteis</strong> após a confirmação do pagamento. A Contratada não responde por prejuízos decorrentes da interrupção motivada por inadimplência.</p>
+
+<h2>12. Rescisão</h2>
+<p><strong>Pela Contratante:</strong> a qualquer tempo, mediante <strong>aviso prévio de 30 (trinta) dias</strong>, sem multa.</p>
+<p><strong>Pela Contratada:</strong> em caso de inadimplência não regularizada, uso ilícito do Site, ou solicitação de conteúdo que viole a lei ou direitos de terceiros.</p>
+<p><strong>Em qualquer caso de rescisão:</strong> a Contratada entrega à Contratante os arquivos do Site e o conteúdo, conforme a cláusula 6. Os dados são mantidos por <strong>30 (trinta) dias</strong> após o encerramento, para eventual retomada, e depois descartados.</p>
+
+<h2>13. Conteúdo, dados pessoais e LGPD</h2>
+<p><strong>13.1</strong> Todo o conteúdo publicado no Site - textos, imagens, vídeos, ofertas, informações comerciais, preços, condições e declarações - é de <strong>exclusiva responsabilidade da Contratante</strong>, que responde por sua veracidade, licitude e conformidade com a legislação.</p>
+<p><strong>13.2</strong> A Contratante é a <strong>controladora</strong> dos dados pessoais tratados no Site, nos termos da Lei 13.709/2018 (LGPD), cabendo a ela definir as finalidades do tratamento, as bases legais aplicáveis, atender às solicitações dos titulares e manter registro das operações.</p>
+<p><strong>13.3</strong> A Contratada atua como <strong>operadora</strong>, tratando os dados pessoais apenas para viabilizar o funcionamento e a manutenção do Site, seguindo as finalidades definidas pela Contratante e mantendo as medidas técnicas de segurança previstas neste contrato: backup, firewall e monitoramento.</p>
+<p><strong>13.4</strong> As partes mantêm sigilo sobre informações comerciais e técnicas a que tiverem acesso.</p>
+
+<h2>14. Limitação de responsabilidade</h2>
+<p>A Contratada mantém backups periódicos e monitoramento, mas <strong>não responde por</strong> lucros cessantes, perda de faturamento ou danos indiretos decorrentes de indisponibilidade, ataques, falhas de terceiros (provedor de hospedagem, registrador, serviços de e-mail) ou do conteúdo publicado pela Contratante.</p>
+<p>A responsabilidade da Contratada, em qualquer hipótese, fica limitada ao valor total pago nos <strong>12 (doze) meses anteriores</strong> ao evento.</p>
+
+<h2>15. Disposições gerais</h2>
+<p>Alterações deste contrato só valem <strong>por escrito</strong>, com concordância das duas partes.</p>
+<p>Este contrato é regido pelas leis brasileiras. Fica eleito o <strong>foro da Comarca de Brasília-DF</strong> para dirimir controvérsias, com renúncia a qualquer outro.</p>
 HTML;
     }
 }
