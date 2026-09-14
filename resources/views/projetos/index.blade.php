@@ -182,7 +182,7 @@
     <script>
         function openDeleteModal(id, title) {
             document.getElementById('delete-modal-title').textContent = title;
-            document.getElementById('delete-form').action = '/projetos/' + id;
+            document.getElementById('delete-form').action = '{{ url('projetos') }}/' + id;
             document.getElementById('delete-modal').classList.remove('hidden');
             document.getElementById('delete-modal').classList.add('flex');
         }
