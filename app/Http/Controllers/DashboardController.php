@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cliente;
 use App\Models\Fatura;
 use App\Models\Proposta;
+use App\Support\Vencimentos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -98,10 +99,17 @@ class DashboardController extends Controller
         // ── Clientes para o filtro ────────────────────────────────────
         $clientes = Cliente::orderBy('nome')->get(['id', 'nome']);
 
+        // ── Hospedagens e domínios vencendo ───────────────────────────
+        // Mesma regra do painel de Hospedagens, via App\Support\Vencimentos.
+        $vencimentos         = Vencimentos::itens();
+        $resumoVencimentos   = Vencimentos::resumo($vencimentos);
+        $vencimentosUrgentes = Vencimentos::urgentes($vencimentos)->take(5);
+
         return view('dashboard.index', compact(
             'totalRecebido', 'totalAReceber', 'totalVencidas', 'qtdVencidas',
             'propostasAprovadas', 'meses', 'propostasPorStatus',
-            'topClientes', 'clientes', 'periodo', 'clienteId'
+            'topClientes', 'clientes', 'periodo', 'clienteId',
+            'resumoVencimentos', 'vencimentosUrgentes'
         ));
     }
 }

@@ -18,14 +18,12 @@ class PropostaItem extends Model
         'ordem',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'quantidade'     => 'decimal:2',
-            'valor_unitario' => 'decimal:2',
-            'valor_total'    => 'decimal:2',
-        ];
-    }
+    /** Propriedade, nao metodo casts(): o metodo so vale do Laravel 10 em diante. */
+    protected $casts = [
+        'quantidade'     => 'decimal:2',
+        'valor_unitario' => 'decimal:2',
+        'valor_total'    => 'decimal:2',
+    ];
 
     public function proposta(): BelongsTo
     {

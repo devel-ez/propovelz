@@ -24,16 +24,18 @@ class Fatura extends Model
         'grupo_clone',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'pago'            => 'boolean',
-            'mes_referencia'  => 'date',
-            'vencimento'      => 'date',
-            'data_pagamento'  => 'date',
-            'valor'           => 'decimal:2',
-        ];
-    }
+    /**
+     * IMPORTANTE: propriedade, nao metodo casts().
+     * O metodo casts() so existe a partir do Laravel 10; aqui e o 9.52 e ele
+     * seria silenciosamente ignorado - foi o que aconteceu ate agora.
+     */
+    protected $casts = [
+        'pago'            => 'boolean',
+        'mes_referencia'  => 'date',
+        'vencimento'      => 'date',
+        'data_pagamento'  => 'date',
+        'valor'           => 'decimal:2',
+    ];
 
     public function cliente(): BelongsTo
     {

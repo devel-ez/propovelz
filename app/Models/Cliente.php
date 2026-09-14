@@ -33,4 +33,9 @@ class Cliente extends Model
     {
         return $this->hasMany(ClienteCredencial::class)->orderBy('sistema');
     }
+
+    public function faturas(): HasMany
+    {
+        return $this->hasMany(Fatura::class)->latest('vencimento');
+    }
 }

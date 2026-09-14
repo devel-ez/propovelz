@@ -118,6 +118,85 @@
 
             </div>
 
+            {{-- ── Hospedagens e Domínios vencendo ───────────────────────────── --}}
+            @php $rv = $resumoVencimentos; @endphp
+            <div class="bg-white rounded-2xl border shadow-sm overflow-hidden
+                        {{ $rv['vencidos'] ? 'border-red-200' : ($rv['alerta'] ? 'border-amber-200' : 'border-slate-200') }}">
+
+                <div class="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-b border-slate-100">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h2 class="text-sm font-semibold text-slate-700">Hospedagens e Domínios</h2>
+
+                        @if($rv['vencidos'])
+                            <span class="text-[10px] font-bold bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                                {{ $rv['vencidos'] }} vencido{{ $rv['vencidos'] > 1 ? 's' : '' }}
+                            </span>
+                        @endif
+
+                        @if($rv['alerta'])
+                            <span class="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">
+                                {{ $rv['alerta'] }} vencendo nos próximos {{ \App\Support\Vencimentos::ALERTA_DIAS }} dias
+                            </span>
+                        @endif
+                    </div>
+
+                    <a href="{{ route('hospedagens.index') }}" class="text-xs font-semibold text-blue-600 hover:underline whitespace-nowrap">
+                        Ver todos
+                    </a>
+                </div>
+
+                @if($vencimentosUrgentes->isEmpty())
+                    <div class="px-6 py-5 flex items-center gap-3">
+                        <div class="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <p class="text-sm text-slate-500">
+                            Nada vencendo nos próximos {{ \App\Support\Vencimentos::ALERTA_DIAS }} dias.
+                            @if($rv['sem_data'])
+                                <span class="text-slate-400">{{ $rv['sem_data'] }} {{ $rv['sem_data'] === 1 ? 'item está' : 'itens estão' }} sem data de vencimento cadastrada.</span>
+                            @endif
+                        </p>
+                    </div>
+                @else
+                    <div class="divide-y divide-slate-100">
+                        @foreach($vencimentosUrgentes as $item)
+                            @php
+                                $atrasado = $item['situacao'] === 'vencido';
+                            @endphp
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 px-6 py-3">
+                                <span class="text-xs font-semibold px-2 py-0.5 rounded-md
+                                    {{ $item['tipo'] === 'Domínio' ? 'bg-indigo-50 text-indigo-700' : 'bg-blue-50 text-blue-700' }}">
+                                    {{ $item['tipo'] }}
+                                </span>
+
+                                <span class="text-sm font-medium text-slate-700 flex-1 min-w-[150px] truncate">
+                                    {{ $item['cliente']?->nome ?? $item['projeto']->nome }}
+                                </span>
+
+                                <span class="text-xs text-slate-400 truncate max-w-[160px]">{{ $item['descricao'] }}</span>
+
+                                @if($item['vigencia'])
+                                    <span class="text-xs text-slate-500">{{ $item['vigencia']->format('d/m/Y') }}</span>
+                                @endif
+
+                                <span class="text-xs font-semibold px-2 py-0.5 rounded-md whitespace-nowrap
+                                    {{ $atrasado ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700' }}">
+                                    @if($item['dias'] < 0)
+                                        venceu há {{ abs($item['dias']) }} {{ abs($item['dias']) === 1 ? 'dia' : 'dias' }}
+                                    @elseif($item['dias'] === 0)
+                                        vence hoje
+                                    @else
+                                        em {{ $item['dias'] }} {{ $item['dias'] === 1 ? 'dia' : 'dias' }}
+                                    @endif
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
             {{-- ── Gráficos ───────────────────────────────────────────────────── --}}
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
 

@@ -74,7 +74,12 @@
                         <tbody class="divide-y divide-slate-100">
                             @foreach($clientes as $cliente)
                                 <tr class="hover:bg-slate-50/40 transition-colors group">
-                                    <td class="px-6 py-4 font-semibold text-slate-800">{{ $cliente->nome }}</td>
+                                    <td class="px-6 py-4">
+                                        <a href="{{ route('clientes.show', $cliente) }}"
+                                           class="font-semibold text-slate-800 hover:text-blue-600 transition-colors">
+                                            {{ $cliente->nome }}
+                                        </a>
+                                    </td>
                                     <td class="px-4 py-4 text-slate-500">{{ $cliente->email ?: '—' }}</td>
                                     <td class="px-4 py-4 text-slate-500">{{ $cliente->telefone ?: '—' }}</td>
                                     <td class="px-4 py-4 text-center">

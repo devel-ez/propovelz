@@ -60,7 +60,7 @@ class ProjetoController extends Controller
 
     public function show(Projeto $projeto)
     {
-        $projeto->load(['cliente', 'propostas']);
+        $projeto->load(['cliente', 'propostas', 'anotacoes.autor']);
         $clientes = Cliente::orderBy('nome')->get();
         $propostas = Proposta::orderBy('titulo')->get();
 

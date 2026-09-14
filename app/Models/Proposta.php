@@ -28,15 +28,13 @@ class Proposta extends Model
         'assinado_por_nome',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'valor_total'       => 'decimal:2',
-            'dados_faturamento' => 'array',
-            'data_validade'     => 'date',
-            'assinado_em'       => 'datetime',
-        ];
-    }
+    /** Propriedade, nao metodo casts(): o metodo so vale do Laravel 10 em diante. */
+    protected $casts = [
+        'valor_total'       => 'decimal:2',
+        'dados_faturamento' => 'array',
+        'data_validade'     => 'date',
+        'assinado_em'       => 'datetime',
+    ];
 
     public function cliente(): BelongsTo
     {

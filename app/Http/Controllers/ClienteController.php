@@ -66,8 +66,18 @@ class ClienteController extends Controller
 
     public function show(Cliente $cliente)
     {
-        $cliente->load('credenciais', 'propostas');
-        return view('clientes.show', compact('cliente'));
+        $cliente->load(['credenciais', 'propostas', 'projetos', 'faturas']);
+
+        // Somado em memoria: as faturas ja estao carregadas, entao nao vale
+        // disparar tres consultas agregadas para calcular isso.
+        $totalPago    = $cliente->faturas->where('pago', true)->sum('valor');
+        $totalAberto  = $cliente->faturas->where('pago', false)->sum('valor');
+        $totalVencido = $cliente->faturas
+            ->where('pago', false)
+            ->filter(fn ($f) => $f->vencimento && $f->vencimento->isPast())
+            ->sum('valor');
+
+        return view('clientes.show', compact('cliente', 'totalPago', 'totalAberto', 'totalVencido'));
     }
 
     public function edit(Cliente $cliente)

@@ -4,6 +4,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FaturaController;
+use App\Http\Controllers\HospedagemController;
+use App\Http\Controllers\ProjetoAnotacaoController;
 use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\PropostaController;
 use App\Http\Controllers\PropostaPublicaController;
@@ -44,6 +46,15 @@ Route::middleware('auth')->group(function () {
     Route::resource('projetos', ProjetoController::class);
     Route::resource('projetos.tarefas', TarefaController::class)->except(['index', 'create', 'show', 'edit']);
     Route::post('projetos/{projeto}/tarefas/reorder', [TarefaController::class, 'reorder'])->name('projetos.tarefas.reorder');
+
+    // Caderno do projeto (anotações com histórico)
+    Route::post('projetos/{projeto}/anotacoes', [ProjetoAnotacaoController::class, 'store'])
+        ->name('projetos.anotacoes.store');
+    Route::delete('projetos/{projeto}/anotacoes/{anotacao}', [ProjetoAnotacaoController::class, 'destroy'])
+        ->name('projetos.anotacoes.destroy');
+
+    // Hospedagens e domínios (vencimentos)
+    Route::get('hospedagens', [HospedagemController::class, 'index'])->name('hospedagens.index');
 
     // Consulta Whois
     Route::post('whois', [WhoisController::class, 'consultar'])->name('whois.consultar');

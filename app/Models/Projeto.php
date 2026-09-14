@@ -23,13 +23,11 @@ class Projeto extends Model
         'status',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'hospedagem_vigencia' => 'date',
-            'dominio_vigencia' => 'date',
-        ];
-    }
+    /** Propriedade, nao metodo casts(): o metodo so vale do Laravel 10 em diante. */
+    protected $casts = [
+        'hospedagem_vigencia' => 'date',
+        'dominio_vigencia' => 'date',
+    ];
 
     public function cliente(): BelongsTo
     {
@@ -44,5 +42,11 @@ class Projeto extends Model
     public function tarefas(): HasMany
     {
         return $this->hasMany(Tarefa::class)->orderBy('ordem');
+    }
+
+    /** Caderno do projeto: anotacoes mais recentes primeiro. */
+    public function anotacoes(): HasMany
+    {
+        return $this->hasMany(ProjetoAnotacao::class)->latest();
     }
 }

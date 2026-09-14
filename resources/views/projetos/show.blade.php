@@ -49,6 +49,14 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                         Editar Projeto
                     </button>
+                    <button type="button" @click="noteModal = true"
+                            class="inline-flex items-center gap-1.5 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-4 py-2 rounded-xl transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Anotações
+                        @if($projeto->anotacoes->count())
+                            <span class="text-[10px] font-bold bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded-full">{{ $projeto->anotacoes->count() }}</span>
+                        @endif
+                    </button>
                     <button type="button" @click="openTaskModal()"
                             class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl transition-colors shadow-sm shadow-blue-200 text-sm focus:ring-2 focus:ring-offset-2 focus:ring-blue-600">
                         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
@@ -162,6 +170,85 @@
             </div>
         </div>
         
+        {{-- Modal de Anotações (caderno do projeto) --}}
+        <div x-show="noteModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+            <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" @click="noteModal = false"></div>
+            <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-2xl flex flex-col max-h-[85vh]">
+                <div class="flex items-center justify-between p-5 md:p-6 border-b border-slate-100">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-900">Anotações</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Histórico do projeto, da mais recente para a mais antiga.</p>
+                    </div>
+                    <button type="button" @click="noteModal = false" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                <div class="overflow-y-auto flex-1 p-5 md:p-6">
+                    {{-- Nova anotação --}}
+                    <form action="{{ route('projetos.anotacoes.store', $projeto) }}" method="POST" class="mb-6">
+                        @csrf
+                        <textarea name="texto" rows="3" required maxlength="5000"
+                                  placeholder="O que aconteceu neste projeto?"
+                                  class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all text-sm resize-y">{{ old('texto') }}</textarea>
+                        @error('texto')
+                            <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        @enderror
+                        <div class="flex justify-end mt-2">
+                            <button type="submit"
+                                    class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                Anotar
+                            </button>
+                        </div>
+                    </form>
+
+                    {{-- Histórico --}}
+                    @if($projeto->anotacoes->isEmpty())
+                        <div class="text-center py-10">
+                            <p class="text-sm text-slate-400">Nenhuma anotação ainda.</p>
+                        </div>
+                    @else
+                        <div class="space-y-5">
+                            @foreach($projeto->anotacoes as $anotacao)
+                                <div class="flex gap-3">
+                                    <div class="flex flex-col items-center flex-shrink-0 pt-1">
+                                        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                                        @if(!$loop->last)
+                                            <div class="w-px flex-1 bg-slate-200 mt-1"></div>
+                                        @endif
+                                    </div>
+                                    <div class="flex-1 min-w-0 pb-1">
+                                        <div class="flex items-center justify-between gap-3 mb-1">
+                                            <span class="text-xs font-semibold text-slate-500">
+                                                {{ $anotacao->created_at->format('d/m/Y \à\s H:i') }}
+                                                @if($anotacao->autor)
+                                                    · {{ $anotacao->autor->name }}
+                                                @endif
+                                            </span>
+                                            <form action="{{ route('projetos.anotacoes.destroy', [$projeto, $anotacao]) }}" method="POST"
+                                                  onsubmit="return confirm('Remover esta anotação? O histórico perde este registro.')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-slate-300 hover:text-red-500 transition-colors" title="Remover">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <p class="text-sm text-slate-700 whitespace-pre-wrap break-words">{{ $anotacao->texto }}</p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
+                <div class="p-5 md:p-6 border-t border-slate-100 bg-slate-50 rounded-b-2xl flex justify-end">
+                    <button type="button" @click="noteModal = false" class="px-4 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl transition-colors">Fechar</button>
+                </div>
+            </div>
+        </div>
+
         {{-- Task Modal (Create & Edit) --}}
         <div x-show="taskModal" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
             <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" @click="taskModal = false"
@@ -222,6 +309,7 @@
         function kanbanBoard() {
             return {
                 editProjectModal: false,
+                noteModal: false,
                 taskModal: false,
                 activeTask: null,
                 taskFormData: {
