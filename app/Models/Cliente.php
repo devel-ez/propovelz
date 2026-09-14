@@ -21,6 +21,14 @@ class Cliente extends Model
     ];
 
     /**
+     * Valor inicial em memoria, pelo mesmo motivo do Projeto: um cliente
+     * recem-criado por create() ficaria com ativo=NULL ate ser recarregado.
+     */
+    protected $attributes = [
+        'ativo' => true,
+    ];
+
+    /**
      * Propriedade, nao metodo casts(): o metodo so vale do Laravel 10 em diante.
      * Sem isto, 'ativo' volta do banco como 0/1 em vez de booleano.
      */

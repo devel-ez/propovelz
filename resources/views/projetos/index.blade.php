@@ -77,12 +77,27 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @foreach($projetos as $projeto)
-                                <tr class="hover:bg-slate-50/40 transition-colors group">
-                                    <td class="px-6 py-4 font-semibold text-slate-800">
-                                        {{ $projeto->nome }}
+                                <tr class="hover:bg-slate-50/40 transition-colors group {{ $projeto->ativo ? '' : 'bg-slate-50/70' }}">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <span class="font-semibold {{ $projeto->ativo ? 'text-slate-800' : 'text-slate-400' }}">
+                                                {{ $projeto->nome }}
+                                            </span>
+                                            @unless($projeto->ativo)
+                                                <span class="text-[10px] font-bold bg-slate-200 text-slate-500 px-2 py-0.5 rounded-full uppercase tracking-wide"
+                                                      title="Não conta vencimento de hospedagem nem domínio">
+                                                    Inativo
+                                                </span>
+                                            @endunless
+                                        </div>
                                     </td>
                                     <td class="px-4 py-4 text-slate-600">
                                         {{ $projeto->cliente?->nome ?? '—' }}
+                                        @if($projeto->cliente && ! $projeto->cliente->ativo)
+                                            <span class="ml-1.5 text-[10px] font-bold bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded-full uppercase tracking-wide">
+                                                Cliente inativo
+                                            </span>
+                                        @endif
                                     </td>
                                     <td class="px-4 py-4 text-slate-600">
                                         {{ $projeto->status }}

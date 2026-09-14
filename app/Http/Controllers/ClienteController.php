@@ -159,17 +159,24 @@ class ClienteController extends Controller
     /**
      * Liga e desliga o cliente sem apagar nada.
      *
-     * Cliente inativo continua no sistema, com propostas e faturas, mas a
-     * hospedagem e o dominio dele deixam de aparecer como vencimento no
-     * dashboard. Serve para quem desistiu de manter o site.
+     * A marcação desce para os projetos dele: inativar o cliente inativa os
+     * projetos, reativar reativa. Os projetos nunca são apagados - só deixam
+     * de contar vencimento de hospedagem e domínio no dashboard.
      */
     public function toggleAtivo(Cliente $cliente)
     {
         $cliente->update(['ativo' => ! $cliente->ativo]);
 
+        // Regra previsível: o estado do cliente manda nos projetos dele.
+        $afetados = $cliente->projetos()->update(['ativo' => $cliente->ativo]);
+
         $mensagem = $cliente->ativo
             ? "\"{$cliente->nome}\" reativado. Os vencimentos voltam a contar."
             : "\"{$cliente->nome}\" inativado. Os vencimentos dele saíram do dashboard — nada foi apagado.";
+
+        if ($afetados > 0) {
+            $mensagem .= " {$afetados} " . ($afetados === 1 ? 'projeto acompanhou' : 'projetos acompanharam') . '.';
+        }
 
         return back()->with('success', $mensagem);
     }

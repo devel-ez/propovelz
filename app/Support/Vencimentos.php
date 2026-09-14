@@ -38,14 +38,20 @@ class Vencimentos
                   ->orWhereNotNull('dominio')
                   ->orWhereNotNull('dominio_vigencia');
             })
-            // Cliente inativo sai dos vencimentos para nao poluir o dashboard.
-            // Nada e apagado: o historico dele continua no sistema e basta
-            // reativar para os vencimentos voltarem a contar.
+            // Inativo sai dos vencimentos para nao poluir o dashboard. Nada e
+            // apagado: o historico continua no sistema e basta reativar para
+            // os vencimentos voltarem a contar.
+            //
+            // Confere os dois lados de proposito. O cliente manda nos projetos
+            // dele, mas se algum projeto ficar dessincronizado (inativado por
+            // fora, importacao, ajuste manual) ele tambem sai - e nao aparece
+            // como vencido sem ninguem entender por que.
             ->when(! $incluirInativos, function ($q) {
-                $q->where(function ($sub) {
-                    $sub->whereHas('cliente', fn ($c) => $c->where('ativo', true))
-                        ->orWhereDoesntHave('cliente');
-                });
+                $q->where('ativo', true)
+                  ->where(function ($sub) {
+                      $sub->whereHas('cliente', fn ($c) => $c->where('ativo', true))
+                          ->orWhereDoesntHave('cliente');
+                  });
             })
             ->get();
 
@@ -85,7 +91,8 @@ class Vencimentos
             'vigencia'  => $data,
             'dias'      => $dias,
             'situacao'  => self::situacao($dias),
-            'inativo'   => $projeto->cliente ? ! $projeto->cliente->ativo : false,
+            // Inativo por conta propria ou porque o cliente esta inativo.
+            'inativo'   => ! $projeto->ativo || ($projeto->cliente && ! $projeto->cliente->ativo),
         ];
     }
 

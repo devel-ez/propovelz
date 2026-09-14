@@ -21,12 +21,24 @@ class Projeto extends Model
         'dominio',
         'dominio_vigencia',
         'status',
+        'ativo',
+    ];
+
+    /**
+     * Valor inicial em memoria. O banco ja tem default(true), mas um projeto
+     * recem-criado por create() nao recebe o valor de volta - sem isto, ele
+     * fica com ativo=NULL ate ser recarregado, e aparece como inativo para
+     * quem consultar o objeto na mesma requisicao.
+     */
+    protected $attributes = [
+        'ativo' => true,
     ];
 
     /** Propriedade, nao metodo casts(): o metodo so vale do Laravel 10 em diante. */
     protected $casts = [
         'hospedagem_vigencia' => 'date',
         'dominio_vigencia' => 'date',
+        'ativo' => 'boolean',
     ];
 
     public function cliente(): BelongsTo
