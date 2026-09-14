@@ -74,7 +74,17 @@ function checkExtras(arquivo){
   const refs = [...src.matchAll(/(?:href|src)="((?!http|mailto:|tel:|#|\/\/)[^"]+)"/g)]
     .map(m => m[1]);
   for (const r of new Set(refs)){
-    const p = path.join(path.dirname(arquivo), r.split('?')[0]);
+    // Tira a query (?v=6) e a ancora (#secao), que nao fazem parte do caminho.
+    const limpo = r.split('?')[0].split('#')[0];
+    if (limpo === '') continue;
+
+    // Caminho comecando com / aponta para a RAIZ do site, nao para a pasta
+    // do arquivo. Sem isso, uma pagina em subpasta (/contato/) acusaria
+    // /assets/css/styles.css como quebrada, sendo que esta certa.
+    const p = limpo.startsWith('/')
+      ? path.join(RAIZ, limpo)
+      : path.join(path.dirname(arquivo), limpo);
+
     if (!fs.existsSync(p)) problemas.push(`referencia quebrada: ${r}`);
   }
 
@@ -155,6 +165,7 @@ function relatar(rotulo, problemas, extra){
 
 const alvos = [
   ['index.html',        checkHtml,    checkExtras],
+  ['contato/index.html', checkHtml,   checkExtras],
   ['_extras/og-card.html', checkHtml, null],
 ];
 
@@ -172,6 +183,7 @@ else relatar('assets/css/styles.css', checkCss(css), 'chaves e caracteres');
 
 console.log('      dados estruturados (JSON-LD):');
 relatar('index.html  (JSON-LD)', checkJsonLd(rel('index.html')));
+relatar('contato/index.html  (JSON-LD)', checkJsonLd(rel('contato/index.html')));
 
 console.log('');
 console.log(falhas === 0 ? '==> Tudo certo.' : `==> ${falhas} problema(s) encontrado(s).`);
