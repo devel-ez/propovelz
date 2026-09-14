@@ -1,442 +1,376 @@
-﻿<!DOCTYPE html>
-<html>
+@php
+    $emp = config('empresa');
+    $ref = '#PROP-' . str_pad($proposta->id, 4, '0', STR_PAD_LEFT);
+
+    // Fontes em TTF porque o dompdf não usa woff2. Ficam no repositório para
+    // o deploy ser reprodutível. Com o subsetting ligado (config/dompdf.php),
+    // só os caracteres usados entram no arquivo, então o PDF segue leve.
+    $fonte = fn (string $arq) => 'file://' . resource_path('fonts/' . $arq);
+@endphp
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-    <meta charset="utf-8">
-    <title>{{ $proposta->titulo }}</title>
-    <style>
-        @page {
-            margin-top: 80px;
-            margin-bottom: 60px;
-            margin-left: 0;
-            margin-right: 0;
-        }
-        @page :first {
-            margin: 0;
-        }
-        body {
-            /* DejaVu Sans, e não Helvetica: a Helvetica do dompdf é a fonte
-               core, limitada a Latin-1, e DESCARTA caracteres como travessão
-               (-) e aspas curvas. O contrato de manutenção usa travessão 12
-               vezes, e eles sumiam do PDF. A DejaVu vem com o dompdf e cobre
-               esses caracteres. A capa mantém Helvetica (ver .cover-page),
-               porque tem posicionamento exato. */
-            font-family: 'DejaVu Sans', sans-serif;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            font-size: 14px;
-        }
-        
-        /* ------------------------------------------------ */
-        /* Cover Page Styles                                */
-        /* ------------------------------------------------ */
-        html, body {
-            height: 100%;
-        }
-        .cover-page {
-            position: relative;
-            width: 100%;
-            height: 100%; /* Force exact page height without overflow */
-            background-color: #f8fafc;
-            overflow: hidden;
-            page-break-after: always;
-            box-sizing: border-box;
-            /* Helvetica aqui, e não a DejaVu do body: a capa usa posicionamento
-               absoluto e medidas exatas, e a DejaVu é mais larga. */
-            font-family: 'Helvetica', 'Arial', sans-serif;
-        }
-        .shape-top-right {
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 400px;
-            height: 300px;
-            background-color: #0a0f1c; /* Azul quase preto da marca */
-        }
-        .shape-top-right-triangle {
-            position: absolute;
-            top: 300px;
-            right: 0;
-            width: 0;
-            height: 0;
-            border-top: 150px solid #0a0f1c;
-            border-left: 400px solid transparent;
-        }
-        .shape-bottom {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 180px;
-            background-color: #2563eb; /* Azul da marca */
-        }
-        .shape-bottom-triangle {
-            position: absolute;
-            bottom: 180px;
-            left: 0;
-            width: 0;
-            height: 0;
-            border-bottom: 120px solid #2563eb;
-            border-right: 800px solid transparent;
-        }
-        .cover-content-wrapper {
-            position: absolute;
-            top: 15%;
-            left: 80px;
-            right: 80px;
-            z-index: 10;
-        }
-        .cover-logo {
-            font-size: 32px;
-            font-weight: 900;
-            color: #0a0f1c;
-            margin-bottom: 80px;
-            letter-spacing: -0.5px;
-            /* Helvetica fixo na capa: ela tem posicionamento exato e a DejaVu,
-               sendo mais larga, estouraria o layout. */
-            font-family: 'Helvetica', 'Arial', sans-serif;
-        }
-        .cover-title {
-            font-size: 48px;
-            font-weight: 900;
-            line-height: 1.1;
-            font-family: 'Helvetica', 'Arial', sans-serif;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: -1px;
-        }
-        .cover-title .dark { color: #0a0f1c; }
-        .cover-title .accent { color: #2563eb; }
-        
-        .cover-subtitle {
-            font-size: 20px;
-            font-weight: bold;
-            color: #334155;
-            margin-top: 25px;
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            border-left: 5px solid #2563eb;
-            padding-left: 15px;
-            line-height: 1.4;
-            font-family: 'Helvetica', 'Arial', sans-serif;
-        }
-        .cover-bullets {
-            margin-top: 50px;
-        }
-        .cover-bullets table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .cover-bullets td {
-            padding: 10px 0;
-            font-size: 16px;
-            color: #475569;
-            font-weight: 500;
-            font-family: 'Helvetica', 'Arial', sans-serif;
-        }
-        .cover-bullets td.bullet {
-            color: #2563eb;
-            padding-right: 15px;
-            font-size: 20px;
-            width: 25px;
-            vertical-align: top;
-        }
-        .cover-bottom-area {
-            position: absolute;
-            bottom: 40px;
-            left: 80px;
-            z-index: 10;
-        }
-        /* ------------------------------------------------ */
-        
-        /* Content Pages */
-        .page-content {
-            padding: 0 50px;
-        }
-        .header {
-            border-bottom: 2px solid #eee;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            color: #111;
-        }
-        .header p {
-            margin: 5px 0 0 0;
-            color: #666;
-            font-size: 14px;
-        }
-        .meta-info {
-            width: 100%;
-            margin-bottom: 40px;
-        }
-        .meta-info td {
-            width: 50%;
-            vertical-align: top;
-        }
-        .meta-label {
-            font-size: 10px;
-            font-weight: bold;
-            color: #888;
-            text-transform: uppercase;
-            margin: 0 0 2px 0;
-        }
-        .meta-value {
-            font-size: 15px;
-            font-weight: bold;
-            color: #111;
-            margin: 0 0 20px 0;
-        }
-        .content {
-            margin-bottom: 50px;
-            line-height: 1.7;
-            font-size: 15px;
-            color: #334155;
-            text-align: justify;
-        }
-        table.items {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 40px;
-        }
-        table.items th {
-            text-align: left;
-            padding: 10px;
-            border-bottom: 2px solid #ddd;
-            font-size: 12px;
-            color: #666;
-            text-transform: uppercase;
-        }
-        table.items td {
-            padding: 12px 10px;
-            border-bottom: 1px solid #eee;
-        }
-        .text-right {
-            text-align: right;
-        }
-        .text-center {
-            text-align: center;
-        }
-        .totals {
-            width: 100%;
-        }
-        .totals td {
-            padding: 5px 10px;
-        }
-        .total-final {
-            font-size: 18px;
-            font-weight: bold;
-            color: #111;
-        }
-        .signature-section {
-            margin-top: 50px;
-            width: 100%;
-        }
-        .signature-box {
-            width: 45%;
-            text-align: center;
-        }
-        .signature-box-esquerda {
-            float: left;
-        }
-        .signature-box-direita {
-            float: right;
-        }
-        .signature-line {
-            border-bottom: 1px solid #333;
-            margin-bottom: 5px;
-            height: 40px;
-            font-size: 18px;
-            color: #2563eb;
-            font-style: italic;
-        }
-        .signature-name {
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin: 0;
-        }
-        .signature-role {
-            font-size: 10px;
-            color: #666;
-            margin: 2px 0 0 0;
-        }
-        .signature-date {
-            font-size: 10px;
-            color: #666;
-            margin: 2px 0 0 0;
-        }
-        .footer {
-            position: fixed;
-            bottom: -20px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            font-size: 10px;
-            color: #999;
-        }
-    </style>
+<meta charset="utf-8">
+<title>{{ $proposta->titulo }}</title>
+<style>
+    @font-face { font-family: 'PJS'; font-style: normal; font-weight: 400; src: url('{{ $fonte('PlusJakartaSans-Regular.ttf') }}') format('truetype'); }
+    @font-face { font-family: 'PJS'; font-style: normal; font-weight: 600; src: url('{{ $fonte('PlusJakartaSans-SemiBold.ttf') }}') format('truetype'); }
+    @font-face { font-family: 'PJS'; font-style: normal; font-weight: 700; src: url('{{ $fonte('PlusJakartaSans-Bold.ttf') }}') format('truetype'); }
+    @font-face { font-family: 'PJS'; font-style: normal; font-weight: 800; src: url('{{ $fonte('PlusJakartaSans-ExtraBold.ttf') }}') format('truetype'); }
+
+    /* A capa ocupa a página inteira, sem margem. As páginas de conteúdo
+       usam margem normal. */
+    @page { margin: 92px 56px 76px; }
+    @page :first { margin: 0; }
+
+    /* O dompdf NÃO suporta flexbox, gap, box-shadow nem gradiente. Todo o
+       layout aqui usa tabela, float, borda e border-radius. */
+    body {
+        font-family: 'PJS', sans-serif;
+        font-size: 10.5px;
+        line-height: 1.65;
+        color: #0F172A;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* ---------- CAPA ---------- */
+    /* Centro, como o hero da landing. Antes era alinhado à esquerda e
+       ficava com cara de outro documento. */
+    .capa {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-color: #0A0F1C;
+        page-break-after: always;
+        overflow: hidden;
+        text-align: center;
+    }
+    .capa-logo    { position: absolute; top: 96px;  left: 0; right: 0; }
+    .capa-centro  { position: absolute; top: 372px; left: 76px; right: 76px; }
+    .capa-fatos   { position: absolute; bottom: 215px; left: 76px; right: 76px; }
+    .capa-rodape  { position: absolute; bottom: 84px;  left: 0; right: 0; }
+
+    .capa-eyebrow {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 2.4px;
+        text-transform: uppercase;
+        color: #60A5FA;
+        margin-bottom: 18px;
+    }
+    .capa-titulo {
+        font-size: 40px;
+        font-weight: 800;
+        line-height: 1.12;
+        letter-spacing: -1px;
+        color: #FFFFFF;
+    }
+    .capa-sub {
+        margin-top: 20px;
+        font-size: 13px;
+        color: #8C9AB4;
+        line-height: 1.6;
+    }
+    .capa-fatos table { width: 100%; border-collapse: collapse; border-top: 1px solid #26304A; }
+    .capa-fatos td { padding: 22px 10px 0; vertical-align: top; width: 33.33%; text-align: center; }
+    .capa-fatos .rot {
+        font-size: 9px; font-weight: 700; letter-spacing: 1.6px;
+        text-transform: uppercase; color: #5D6B85; margin-bottom: 5px;
+    }
+    .capa-fatos .val { font-size: 14px; font-weight: 700; color: #FFFFFF; }
+
+    .capa-rodape { font-size: 10px; color: #5D6B85; }
+    .capa-rodape .marca { font-weight: 700; color: #8C9AB4; }
+
+    /* ---------- CABEÇALHO DAS PÁGINAS DE CONTEÚDO ---------- */
+    .cabecalho { border-bottom: 2px solid #2563EB; padding-bottom: 12px; margin-bottom: 26px; }
+    .cabecalho table { width: 100%; border-collapse: collapse; }
+    .cabecalho td { vertical-align: middle; }
+    .cabecalho .dir { text-align: right; }
+    .cabecalho .ref {
+        font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
+        text-transform: uppercase; color: #2563EB;
+    }
+    .cabecalho .data { font-size: 10px; color: #64748B; margin-top: 3px; }
+
+    /* ---------- TÍTULO E FICHA ---------- */
+    .titulo-doc {
+        font-size: 22px; font-weight: 800; letter-spacing: -0.4px;
+        color: #0F172A; margin: 0 0 18px 0; line-height: 1.25;
+    }
+    .ficha { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+    .ficha td {
+        width: 25%; vertical-align: top;
+        background-color: #F5F8FD;
+        border: 1px solid #E5E9F0;
+        padding: 12px 14px;
+    }
+    .ficha .rot {
+        font-size: 8.5px; font-weight: 700; letter-spacing: 1.2px;
+        text-transform: uppercase; color: #94A3B8; margin-bottom: 4px;
+    }
+    .ficha .val { font-size: 11px; font-weight: 600; color: #0F172A; }
+
+    /* ---------- CONTEÚDO (texto do cliente) ---------- */
+    .conteudo { margin-bottom: 34px; }
+    .conteudo h2 {
+        font-size: 13px; font-weight: 800; letter-spacing: -0.2px;
+        color: #0F172A;
+        border-bottom: 1px solid #E5E9F0;
+        padding-bottom: 7px;
+        margin: 24px 0 12px 0;
+    }
+    .conteudo h2:first-child { margin-top: 0; }
+    .conteudo h3 { font-size: 11.5px; font-weight: 700; color: #0F172A; margin: 18px 0 8px 0; }
+    .conteudo p { margin: 0 0 10px 0; }
+    .conteudo ul, .conteudo ol { margin: 0 0 12px 0; padding-left: 18px; }
+    .conteudo li { margin-bottom: 5px; }
+    .conteudo strong { font-weight: 700; color: #0F172A; }
+
+    /* ---------- ITENS ---------- */
+    .bloco-titulo {
+        font-size: 12px; font-weight: 800; letter-spacing: 0.4px;
+        text-transform: uppercase; color: #0F172A;
+        border-bottom: 2px solid #2563EB;
+        padding-bottom: 8px; margin-bottom: 0;
+    }
+    .itens { width: 100%; border-collapse: collapse; margin-bottom: 0; }
+    .itens thead th {
+        background-color: #F5F8FD;
+        border-bottom: 1px solid #E5E9F0;
+        font-size: 8.5px; font-weight: 700; letter-spacing: 1.1px;
+        text-transform: uppercase; color: #94A3B8;
+        padding: 10px 14px; text-align: left;
+    }
+    .itens tbody td {
+        border-bottom: 1px solid #EDF1F7;
+        padding: 11px 14px; vertical-align: top;
+        font-size: 10.5px; color: #334155;
+    }
+    .itens tbody tr:last-child td { border-bottom: 0; }
+    .itens .c { text-align: center; }
+    .itens .r { text-align: right; }
+    .itens .desc { font-weight: 600; color: #0F172A; }
+
+    .totais { width: 100%; border-collapse: collapse; margin-top: 0; }
+    .totais td { padding: 11px 14px; }
+    .totais .rot {
+        text-align: right; font-size: 9px; font-weight: 700;
+        letter-spacing: 1.1px; text-transform: uppercase; color: #94A3B8;
+    }
+    .totais .val { text-align: right; font-size: 11px; font-weight: 700; color: #334155; width: 130px; }
+    .totais .final {
+        background-color: #F5F8FD;
+        border-top: 2px solid #2563EB;
+    }
+    .totais .final .rot { color: #0F172A; }
+    .totais .final .val { font-size: 15px; font-weight: 800; color: #2563EB; }
+
+    /* ---------- ASSINATURAS ---------- */
+    .assinaturas { margin-top: 54px; page-break-inside: avoid; }
+    .assinaturas .nota {
+        font-size: 9px; color: #94A3B8; line-height: 1.6;
+        border-top: 1px solid #E5E9F0; padding-top: 16px; margin-bottom: 44px;
+    }
+    .assinaturas table { width: 100%; border-collapse: collapse; }
+    .assinaturas td { width: 50%; vertical-align: bottom; padding: 0 14px; text-align: center; }
+    .ass-linha {
+        border-bottom: 1px solid #94A3B8;
+        height: 42px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #2563EB;
+        padding-bottom: 4px;
+    }
+    .ass-nome {
+        font-size: 9px; font-weight: 700; letter-spacing: 1.1px;
+        text-transform: uppercase; color: #0F172A; margin-top: 7px;
+    }
+    .ass-info { font-size: 8.5px; color: #94A3B8; margin-top: 3px; }
+
+    /* ---------- RODAPÉ FIXO ---------- */
+    .rodape {
+        position: fixed;
+        bottom: -46px; left: 0; right: 0;
+        font-size: 8.5px; color: #B6C0D0;
+        border-top: 1px solid #EDF1F7;
+        padding-top: 8px;
+    }
+    .rodape table { width: 100%; border-collapse: collapse; }
+    .rodape td { vertical-align: top; }
+    .rodape .dir { text-align: right; }
+</style>
 </head>
 <body>
 
-    <div class="cover-page">
-        <div class="shape-top-right"></div>
-        <div class="shape-top-right-triangle"></div>
-        
-        <div class="shape-bottom"></div>
-        <div class="shape-bottom-triangle"></div>
+    {{-- ===================== CAPA ===================== --}}
+    <div class="capa">
+        <div class="capa-logo">
+            <img src="{{ public_path('assets/pdf/logo-claro.png') }}" width="252" alt="Crie Sites Pro">
+        </div>
 
-        <div class="cover-content-wrapper">
-            <div class="cover-logo">
-                <span style="display: inline-block; width: 14px; height: 14px; background: #2563eb; border-radius: 4px; margin-right: 10px;"></span>Crie Sites <span style="color: #2563eb;">Pro</span>
-            </div>
-
-            <div class="cover-title">
-                <span class="dark">PROPOSTA</span><br>
-                <span class="dark">COMERCIAL</span><br>
-                <span class="accent">DESENVOLVIMENTO E</span><br>
-                <span class="accent">MANUTENÇÃO</span><br>
-                <span class="dark">DE SOFTWARE</span>
-            </div>
-
-            <div class="cover-subtitle">
-                {{ $proposta->titulo }}
-            </div>
-
-            <div class="cover-bullets">
-                <table>
-                    <tr>
-                        <td class="bullet">&bull;</td>
-                        <td>Soluções web modernas e escaláveis</td>
-                    </tr>
-                    <tr>
-                        <td class="bullet">&bull;</td>
-                        <td>Manutenção contínua e suporte técnico</td>
-                    </tr>
-                    <tr>
-                        <td class="bullet">&bull;</td>
-                        <td>Desenvolvimento orientado ao seu negócio</td>
-                    </tr>
-                </table>
+        <div class="capa-centro">
+            <div class="capa-eyebrow">Proposta Comercial</div>
+            <div class="capa-titulo">{{ $proposta->titulo }}</div>
+            <div class="capa-sub">
+                {{ $emp['responsavel']['nome'] }} - {{ $emp['responsavel']['cargo'] }}<br>
+                {{ $emp['site'] }} - {{ $emp['whatsapp'] }}
             </div>
         </div>
 
-        <div class="cover-bottom-area">
+        <div class="capa-fatos">
             <table>
                 <tr>
-                    <td style="background: white; color: #2563eb; padding: 12px 18px; border-radius: 8px; font-weight: bold; font-size: 24px; text-align: center;">
-                        <span style="font-family: Helvetica, Arial, sans-serif;">CS</span>
+                    <td>
+                        <div class="rot">Cliente</div>
+                        <div class="val">{{ $proposta->cliente?->nome ?? 'A definir' }}</div>
                     </td>
-                    <td style="padding-left: 20px; color: white; font-weight: bold; font-size: 14px; letter-spacing: 1px; line-height: 1.4;">
-                        PRESTAÇÃO DE SERVIÇOS EM<br>TECNOLOGIA DA INFORMAÇÃO
+                    <td>
+                        <div class="rot">Validade</div>
+                        <div class="val">
+                            {{ $proposta->data_validade ? \Carbon\Carbon::parse($proposta->data_validade)->format('d/m/Y') : 'Sem validade restrita' }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="rot">Investimento</div>
+                        <div class="val">R$ {{ number_format($proposta->valor_total, 2, ',', '.') }}</div>
                     </td>
                 </tr>
             </table>
         </div>
-    </div>
-    
-    <div class="page-content">
-        <div class="header">
-            <h1>{{ $proposta->titulo }}</h1>
-            <p>Crie Sites Pro</p>
+
+        <div class="capa-rodape">
+            <span class="marca">{{ $ref }}</span> &middot; emitida em {{ $proposta->created_at->format('d/m/Y') }}
         </div>
-
-    <table class="meta-info">
-        <tr>
-            <td>
-                <p class="meta-label">Cliente</p>
-                <p class="meta-value">{{ $proposta->cliente?->nome }}</p>
-                
-                <p class="meta-label">Criada em</p>
-                <p class="meta-value">{{ $proposta->created_at->format('d/m/Y') }}</p>
-            </td>
-            <td style="text-align: right;">
-                <p class="meta-label">Ref</p>
-                <p class="meta-value">#PROP-{{ str_pad($proposta->id, 4, '0', STR_PAD_LEFT) }}</p>
-                
-                <p class="meta-label">Validade</p>
-                <p class="meta-value">{{ $proposta->data_validade ? \Carbon\Carbon::parse($proposta->data_validade)->format('d/m/Y') : 'Sem validade restrita' }}</p>
-            </td>
-        </tr>
-    </table>
-
-    <div class="content">
-        {!! $proposta->conteudo !!}
     </div>
 
-    @if($proposta->itens->isNotEmpty())
-        <h3 style="font-size: 14px; text-transform: uppercase; color: #333; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 15px;">Investimento e Escopo</h3>
-        
-        <table class="items">
-            <thead>
+    {{-- ===================== CONTEÚDO ===================== --}}
+    <div class="pagina">
+
+        <div class="cabecalho">
+            <table>
                 <tr>
-                    <th>Descrição dos Serviços/Produtos</th>
-                    <th class="text-center">Qtd.</th>
-                    <th class="text-right">V. Unit.</th>
-                    <th class="text-right">Total</th>
+                    <td>
+                        <img src="{{ public_path('assets/pdf/logo-escuro.png') }}" width="185" alt="Crie Sites Pro">
+                    </td>
+                    <td class="dir">
+                        <div class="ref">{{ $ref }}</div>
+                        <div class="data">{{ $proposta->created_at->format('d/m/Y') }}</div>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach($proposta->itens as $item)
+            </table>
+        </div>
+
+        <div class="titulo-doc">{{ $proposta->titulo }}</div>
+
+        <table class="ficha">
+            <tr>
+                <td>
+                    <div class="rot">Cliente</div>
+                    <div class="val">{{ $proposta->cliente?->nome ?? 'A definir' }}</div>
+                </td>
+                <td>
+                    <div class="rot">Emitida em</div>
+                    <div class="val">{{ $proposta->created_at->format('d/m/Y') }}</div>
+                </td>
+                <td>
+                    <div class="rot">Validade</div>
+                    <div class="val">
+                        {{ $proposta->data_validade ? \Carbon\Carbon::parse($proposta->data_validade)->format('d/m/Y') : 'Sem validade restrita' }}
+                    </div>
+                </td>
+                <td>
+                    <div class="rot">Valor total</div>
+                    <div class="val">R$ {{ number_format($proposta->valor_total, 2, ',', '.') }}</div>
+                </td>
+            </tr>
+        </table>
+
+        @if(trim((string) $proposta->conteudo) !== '')
+            <div class="conteudo">{!! $proposta->conteudo !!}</div>
+        @endif
+
+        @if($proposta->itens->isNotEmpty())
+            <div class="bloco-titulo">Investimento e escopo</div>
+            <table class="itens">
+                <thead>
                     <tr>
-                        <td>{{ $item->descricao }}</td>
-                        <td class="text-center">{{ number_format($item->quantidade, 2, ',', '.') }}</td>
-                        <td class="text-right">R$ {{ number_format($item->valor_unitario, 2, ',', '.') }}</td>
-                        <td class="text-right" style="font-weight: bold;">R$ {{ number_format($item->valor_total, 2, ',', '.') }}</td>
+                        <th>Descrição dos serviços</th>
+                        <th class="c" style="width: 60px;">Qtd.</th>
+                        <th class="r" style="width: 100px;">Valor unit.</th>
+                        <th class="r" style="width: 110px;">Total</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach($proposta->itens as $item)
+                        <tr>
+                            <td class="desc">{{ $item->descricao }}</td>
+                            <td class="c">{{ number_format($item->quantidade, 2, ',', '.') }}</td>
+                            <td class="r">R$ {{ number_format($item->valor_unitario, 2, ',', '.') }}</td>
+                            <td class="r" style="font-weight: 700; color: #0F172A;">
+                                R$ {{ number_format($item->valor_total, 2, ',', '.') }}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
 
-        <table class="totals">
-            <tr>
-                <td style="width: 60%;"></td>
-                <td class="text-right" style="color: #666; font-size: 12px; text-transform: uppercase;">Subtotal</td>
-                <td class="text-right" style="font-weight: bold;">R$ {{ number_format($proposta->valor_total, 2, ',', '.') }}</td>
-            </tr>
-            <tr>
-                <td style="width: 60%;"></td>
-                <td class="text-right" style="font-weight: bold; text-transform: uppercase; padding-top: 15px; border-top: 1px solid #ddd;">Total Final</td>
-                <td class="text-right total-final" style="padding-top: 15px; border-top: 1px solid #ddd;">R$ {{ number_format($proposta->valor_total, 2, ',', '.') }}</td>
-            </tr>
-        </table>
-    @endif
+            <table class="totais">
+                <tr>
+                    <td class="rot" style="width: 60%;">Subtotal</td>
+                    <td class="val">R$ {{ number_format($proposta->valor_total, 2, ',', '.') }}</td>
+                </tr>
+                <tr class="final">
+                    <td class="rot">Total final</td>
+                    <td class="val">R$ {{ number_format($proposta->valor_total, 2, ',', '.') }}</td>
+                </tr>
+            </table>
+        @endif
 
-    <div class="signature-section">
-        <div style="font-size: 12px; line-height: 1.5; color: #64748b; margin-bottom: 40px;">
-            <p style="margin: 0 0 10px 0;"><strong>Confidencialidade:</strong> Este documento tem validade legal e os valores comerciais aqui descritos são de caráter estritamente confidencial.</p>
-            <p style="margin: 0;"><strong>Suporte:</strong> Dúvidas? Entre em contato conosco através do canal de atendimento exclusivo da Crie Sites Pro.</p>
-        </div>
-
-        {{-- Contratada: assinatura fixa, entra automaticamente ao salvar a proposta --}}
-        <div class="signature-box signature-box-esquerda">
-            <div class="signature-line">{{ config('empresa.responsavel.assinatura') }}</div>
-            <p class="signature-name">Assinatura da Contratada</p>
-            <p class="signature-role">
-                {{ config('empresa.responsavel.nome') }} - {{ config('empresa.responsavel.cargo') }}
-            </p>
-        </div>
-
-        {{-- Contratante: a linha fica em branco até assinar pelo link.
-             Sem nome embaixo de propósito - quem assina escreve o próprio
-             nome no momento da assinatura, e ele aparece aqui depois. --}}
-        <div class="signature-box signature-box-direita">
-            <div class="signature-line">
-                @if($proposta->assinado_em)
-                    {{ \Illuminate\Support\Str::title($proposta->assinado_por_nome) }}
-                @endif
+        <div class="assinaturas">
+            <div class="nota">
+                Este documento tem validade legal e os valores comerciais aqui descritos são de caráter
+                estritamente confidencial. Dúvidas? Fale com a gente pelo WhatsApp
+                {{ $emp['whatsapp'] }} ou pelo e-mail {{ $emp['email'] }}.
             </div>
-            <p class="signature-name">Assinatura do Contratante</p>
-            @if($proposta->assinado_em)
-                <p class="signature-date">
-                    Assinado em {{ \Carbon\Carbon::parse($proposta->assinado_em)->format('d/m/Y H:i') }}
-                </p>
-            @endif
+
+            <table>
+                <tr>
+                    <td>
+                        <div class="ass-linha">{{ $emp['responsavel']['assinatura'] }}</div>
+                        <div class="ass-nome">Assinatura da Contratada</div>
+                        <div class="ass-info">
+                            {{ $emp['responsavel']['nome'] }} - {{ $emp['responsavel']['cargo'] }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="ass-linha">
+                            @if($proposta->assinado_em)
+                                {{ \Illuminate\Support\Str::title($proposta->assinado_por_nome) }}
+                            @endif
+                        </div>
+                        <div class="ass-nome">Assinatura do Contratante</div>
+                        @if($proposta->assinado_em)
+                            <div class="ass-info">
+                                Assinado em {{ \Carbon\Carbon::parse($proposta->assinado_em)->format('d/m/Y H:i') }}
+                            </div>
+                        @endif
+                    </td>
+                </tr>
+            </table>
         </div>
 
-        <div style="clear: both;"></div>
+    </div>
+
+    {{-- Rodapé fixo nas páginas de conteúdo (a capa é a primeira). --}}
+    <div class="rodape">
+        <table>
+            <tr>
+                <td>{{ $emp['nome'] }} &middot; {{ $emp['site'] }}</td>
+                <td class="dir">{{ $ref }}</td>
+            </tr>
+        </table>
     </div>
 
 </body>
