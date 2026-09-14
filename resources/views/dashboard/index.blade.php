@@ -135,7 +135,7 @@
 
                         @if($rv['alerta'])
                             <span class="text-[10px] font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">
-                                {{ $rv['alerta'] }} vencendo nos próximos {{ \App\Support\Vencimentos::ALERTA_DIAS }} dias
+                                {{ $rv['alerta'] }} vencendo nos próximos {{ \App\Support\Vencimentos::ALERTA_LABEL }}
                             </span>
                         @endif
                     </div>
@@ -153,7 +153,7 @@
                             </svg>
                         </div>
                         <p class="text-sm text-slate-500">
-                            Nada vencendo nos próximos {{ \App\Support\Vencimentos::ALERTA_DIAS }} dias.
+                            Nada vencendo nos próximos {{ \App\Support\Vencimentos::ALERTA_LABEL }}.
                             @if($rv['sem_data'])
                                 <span class="text-slate-400">{{ $rv['sem_data'] }} {{ $rv['sem_data'] === 1 ? 'item está' : 'itens estão' }} sem data de vencimento cadastrada.</span>
                             @endif

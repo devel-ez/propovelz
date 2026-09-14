@@ -26,7 +26,7 @@
                 <h1 class="text-2xl font-bold text-slate-900">Hospedagens e Domínios</h1>
                 <p class="text-sm text-slate-500 mt-0.5">
                     Vencimentos de todos os projetos, do mais urgente ao menos.
-                    Alerta a partir de {{ \App\Support\Vencimentos::ALERTA_DIAS }} dias.
+                    Alerta a partir de {{ \App\Support\Vencimentos::ALERTA_LABEL }} do vencimento.
                 </p>
             </div>
 
@@ -58,7 +58,7 @@
                 <p class="text-3xl font-black mt-1 {{ $resumo['alerta'] ? 'text-amber-600' : 'text-slate-300' }}">
                     {{ $resumo['alerta'] }}
                 </p>
-                <p class="text-xs text-slate-400 mt-1">nos próximos {{ \App\Support\Vencimentos::ALERTA_DIAS }} dias</p>
+                <p class="text-xs text-slate-400 mt-1">nos próximos {{ \App\Support\Vencimentos::ALERTA_LABEL }}</p>
             </div>
 
             <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-5">

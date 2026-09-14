@@ -18,8 +18,20 @@ use Illuminate\Support\Collection;
  */
 class Vencimentos
 {
-    /** A partir de quantos dias o item entra em alerta. */
-    public const ALERTA_DIAS = 30;
+    /**
+     * A partir de quantos dias o item entra em alerta.
+     *
+     * São 3 meses: hospedagem e domínio vencem em ciclos anuais, e um aviso
+     * de 30 dias não dava tempo de cobrar o cliente e renovar sem correr o
+     * risco de o site sair do ar.
+     *
+     * ALERTA_LABEL existe para o texto da tela dizer "3 meses" em vez de
+     * "90 dias". Se mudar um, mude o outro.
+     */
+    public const ALERTA_DIAS = 90;
+
+    /** Como o prazo de alerta aparece na tela. */
+    public const ALERTA_LABEL = '3 meses';
 
     /**
      * Todos os itens de hospedagem e dominio, do mais urgente ao menos.
