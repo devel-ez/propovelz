@@ -17,7 +17,22 @@ class Cliente extends Model
         'email',
         'telefone',
         'documento',
+        'ativo',
     ];
+
+    /**
+     * Propriedade, nao metodo casts(): o metodo so vale do Laravel 10 em diante.
+     * Sem isto, 'ativo' volta do banco como 0/1 em vez de booleano.
+     */
+    protected $casts = [
+        'ativo' => 'boolean',
+    ];
+
+    /** Só quem ainda mantém o site: usado para os vencimentos. */
+    public function scopeAtivos($query)
+    {
+        return $query->where('ativo', true);
+    }
 
     public function propostas(): HasMany
     {

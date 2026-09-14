@@ -41,6 +41,9 @@ Route::middleware('auth')->group(function () {
 
     // Clientes (CRUD)
     Route::resource('clientes', ClienteController::class);
+    // Inativar/reativar sem apagar: some dos vencimentos, mantem o histórico
+    Route::patch('clientes/{cliente}/toggle-ativo', [ClienteController::class, 'toggleAtivo'])
+        ->name('clientes.toggle-ativo');
 
     // Projetos (CRUD + Kanban)
     Route::resource('projetos', ProjetoController::class);

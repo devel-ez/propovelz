@@ -155,4 +155,22 @@ class ClienteController extends Controller
         return redirect()->route('clientes.index')
             ->with('success', "Cliente \"{$nome}\" excluído com sucesso!");
     }
+
+    /**
+     * Liga e desliga o cliente sem apagar nada.
+     *
+     * Cliente inativo continua no sistema, com propostas e faturas, mas a
+     * hospedagem e o dominio dele deixam de aparecer como vencimento no
+     * dashboard. Serve para quem desistiu de manter o site.
+     */
+    public function toggleAtivo(Cliente $cliente)
+    {
+        $cliente->update(['ativo' => ! $cliente->ativo]);
+
+        $mensagem = $cliente->ativo
+            ? "\"{$cliente->nome}\" reativado. Os vencimentos voltam a contar."
+            : "\"{$cliente->nome}\" inativado. Os vencimentos dele saíram do dashboard — nada foi apagado.";
+
+        return back()->with('success', $mensagem);
+    }
 }

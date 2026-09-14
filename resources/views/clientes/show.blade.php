@@ -52,6 +52,21 @@
                     @endif
                 </div>
             </div>
+            <form method="POST" action="{{ route('clientes.toggle-ativo', $cliente) }}">
+                @csrf
+                @method('PATCH')
+                <button type="submit"
+                        title="{{ $cliente->ativo ? 'Inativar: sai dos vencimentos, nada é apagado' : 'Reativar: os vencimentos voltam a contar' }}"
+                        class="inline-flex items-center gap-2 font-semibold px-4 py-2.5 rounded-xl transition-colors text-sm whitespace-nowrap
+                               {{ $cliente->ativo
+                                    ? 'bg-white border border-slate-200 hover:bg-amber-50 hover:border-amber-200 text-slate-700'
+                                    : 'bg-emerald-600 hover:bg-emerald-700 text-white' }}">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    {{ $cliente->ativo ? 'Inativar' : 'Reativar' }}
+                </button>
+            </form>
             <a href="{{ route('clientes.edit', $cliente) }}"
                class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold px-4 py-2.5 rounded-xl transition-colors text-sm whitespace-nowrap">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,6 +75,21 @@
                 Editar
             </a>
         </div>
+
+        @unless($cliente->ativo)
+            <div class="flex items-start gap-3 bg-slate-100 border border-slate-200 rounded-2xl px-5 py-4 mb-8">
+                <svg class="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                </svg>
+                <div>
+                    <p class="text-sm font-semibold text-slate-700">Cliente inativo</p>
+                    <p class="text-xs text-slate-500 mt-0.5">
+                        A hospedagem e o domínio dele <strong>não aparecem</strong> no painel de vencimentos nem no dashboard.
+                        Todo o histórico abaixo continua aqui, e nada foi apagado — é só clicar em <strong>Reativar</strong> quando ele voltar.
+                    </p>
+                </div>
+            </div>
+        @endunless
 
         {{-- Números --}}
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">

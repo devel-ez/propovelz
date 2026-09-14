@@ -24,17 +24,28 @@ class Vencimentos
     /**
      * Todos os itens de hospedagem e dominio, do mais urgente ao menos.
      *
+     * @param  bool  $incluirInativos  Inclui projetos de clientes marcados como
+     *                                 inativos (desistiram de manter o site).
      * @return Collection<int, array<string, mixed>>
      */
-    public static function itens(): Collection
+    public static function itens(bool $incluirInativos = false): Collection
     {
         $projetos = Projeto::query()
-            ->with('cliente:id,nome')
+            ->with('cliente:id,nome,ativo')
             ->where(function ($q) {
                 $q->whereNotNull('hospedagem_tipo')
                   ->orWhereNotNull('hospedagem_vigencia')
                   ->orWhereNotNull('dominio')
                   ->orWhereNotNull('dominio_vigencia');
+            })
+            // Cliente inativo sai dos vencimentos para nao poluir o dashboard.
+            // Nada e apagado: o historico dele continua no sistema e basta
+            // reativar para os vencimentos voltarem a contar.
+            ->when(! $incluirInativos, function ($q) {
+                $q->where(function ($sub) {
+                    $sub->whereHas('cliente', fn ($c) => $c->where('ativo', true))
+                        ->orWhereDoesntHave('cliente');
+                });
             })
             ->get();
 
@@ -74,6 +85,7 @@ class Vencimentos
             'vigencia'  => $data,
             'dias'      => $dias,
             'situacao'  => self::situacao($dias),
+            'inativo'   => $projeto->cliente ? ! $projeto->cliente->ativo : false,
         ];
     }
 

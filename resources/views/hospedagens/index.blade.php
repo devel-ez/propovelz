@@ -21,12 +21,26 @@
 
     <div class="p-6 md:p-8 max-w-full">
         {{-- Header --}}
-        <div class="mb-8">
-            <h1 class="text-2xl font-bold text-slate-900">Hospedagens e Domínios</h1>
-            <p class="text-sm text-slate-500 mt-0.5">
-                Vencimentos de todos os projetos, do mais urgente ao menos.
-                Alerta a partir de {{ \App\Support\Vencimentos::ALERTA_DIAS }} dias.
-            </p>
+        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">Hospedagens e Domínios</h1>
+                <p class="text-sm text-slate-500 mt-0.5">
+                    Vencimentos de todos os projetos, do mais urgente ao menos.
+                    Alerta a partir de {{ \App\Support\Vencimentos::ALERTA_DIAS }} dias.
+                </p>
+            </div>
+
+            <a href="{{ route('hospedagens.index', $incluirInativos ? [] : ['inativos' => 1]) }}"
+               class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl border transition-colors whitespace-nowrap
+                      {{ $incluirInativos
+                            ? 'bg-slate-800 border-slate-800 text-white hover:bg-slate-700'
+                            : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50' }}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+                {{ $incluirInativos ? 'Ocultar clientes inativos' : 'Mostrar clientes inativos' }}
+            </a>
         </div>
 
         {{-- Resumo --}}
@@ -97,7 +111,7 @@
                         <tbody class="divide-y divide-slate-100">
                             @foreach($itens as $item)
                                 @php $e = $estilos[$item['situacao']]; @endphp
-                                <tr class="hover:bg-slate-50/40 transition-colors">
+                                <tr class="hover:bg-slate-50/40 transition-colors {{ $item['inativo'] ? 'bg-slate-50/70' : '' }}">
                                     <td class="px-6 py-4">
                                         <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg
                                             {{ $item['tipo'] === 'Domínio' ? 'bg-indigo-50 text-indigo-700' : 'bg-blue-50 text-blue-700' }}">
@@ -108,9 +122,14 @@
                                     <td class="px-4 py-4">
                                         @if($item['cliente'])
                                             <a href="{{ route('clientes.show', $item['cliente']->id) }}"
-                                               class="font-medium text-slate-700 hover:text-blue-600 transition-colors">
+                                               class="font-medium {{ $item['inativo'] ? 'text-slate-400' : 'text-slate-700' }} hover:text-blue-600 transition-colors">
                                                 {{ $item['cliente']->nome }}
                                             </a>
+                                            @if($item['inativo'])
+                                                <span class="ml-1.5 text-[10px] font-bold bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded-full uppercase tracking-wide">
+                                                    Inativo
+                                                </span>
+                                            @endif
                                         @else
                                             <span class="text-slate-400">—</span>
                                         @endif

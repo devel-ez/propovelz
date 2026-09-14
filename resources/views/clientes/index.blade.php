@@ -73,12 +73,20 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @foreach($clientes as $cliente)
-                                <tr class="hover:bg-slate-50/40 transition-colors group">
+                                <tr class="hover:bg-slate-50/40 transition-colors group {{ $cliente->ativo ? '' : 'bg-slate-50/70' }}">
                                     <td class="px-6 py-4">
-                                        <a href="{{ route('clientes.show', $cliente) }}"
-                                           class="font-semibold text-slate-800 hover:text-blue-600 transition-colors">
-                                            {{ $cliente->nome }}
-                                        </a>
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <a href="{{ route('clientes.show', $cliente) }}"
+                                               class="font-semibold {{ $cliente->ativo ? 'text-slate-800' : 'text-slate-400' }} hover:text-blue-600 transition-colors">
+                                                {{ $cliente->nome }}
+                                            </a>
+                                            @unless($cliente->ativo)
+                                                <span class="text-[10px] font-bold bg-slate-200 text-slate-500 px-2 py-0.5 rounded-full uppercase tracking-wide"
+                                                      title="Não conta vencimento de hospedagem nem domínio">
+                                                    Inativo
+                                                </span>
+                                            @endunless
+                                        </div>
                                     </td>
                                     <td class="px-4 py-4 text-slate-500">{{ $cliente->email ?: '—' }}</td>
                                     <td class="px-4 py-4 text-slate-500">{{ $cliente->telefone ?: '—' }}</td>
@@ -100,6 +108,18 @@
                                                 </svg>
                                                 Editar
                                             </a>
+                                            <form method="POST" action="{{ route('clientes.toggle-ativo', $cliente) }}" class="inline">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit"
+                                                        title="{{ $cliente->ativo ? 'Inativar: sai dos vencimentos, nada é apagado' : 'Reativar: os vencimentos voltam a contar' }}"
+                                                        class="inline-flex items-center gap-1 text-xs font-medium text-slate-600 hover:text-amber-600 px-2.5 py-1.5 rounded-lg hover:bg-amber-50 transition-colors">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                                    </svg>
+                                                    {{ $cliente->ativo ? 'Inativar' : 'Reativar' }}
+                                                </button>
+                                            </form>
                                             <button type="button"
                                                     onclick="openDeleteModal({{ $cliente->id }}, '{{ addslashes($cliente->nome) }}')"
                                                     class="inline-flex items-center gap-1 text-xs font-medium text-slate-600 hover:text-red-600 px-2.5 py-1.5 rounded-lg hover:bg-red-50 transition-colors">
