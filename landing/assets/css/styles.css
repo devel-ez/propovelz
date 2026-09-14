@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    Crie Sites Pro — folha de estilo principal
    HTML/CSS puro, sem framework, sem build. Edite e suba por FTP.
    --------------------------------------------------------------------------
@@ -75,6 +75,14 @@ body{
   background:var(--paper);
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
+  /* Rede de seguranca, NAO correcao.
+     Em set/2026 o grid .cards vazava 38px em celular de 360px, porque
+     minmax(380px,1fr) nao encolhe abaixo do minimo, e este hidden estava
+     mascarando o problema: o conteudo era cortado e sobrava uma faixa
+     branca na lateral. A causa foi corrigida nos grids (.cards e .explain),
+     com breakpoint para 1 coluna.
+     Se a faixa branca voltar: procure o elemento que passa da margem no
+     navegador, em vez de confiar neste hidden. */
   overflow-x:hidden;
 }
 
@@ -311,6 +319,13 @@ code{
   grid-template-columns:repeat(auto-fit,minmax(380px,1fr));
 }
 
+/* Abaixo de 840px a coluna de 380px nao cabe. O minmax NAO encolhe abaixo
+   do minimo, entao o card vazava 38px para fora em celular de 360px - era
+   isso que criava a faixa branca lateral. */
+@media (max-width:840px){
+  .cards{ grid-template-columns:1fr; }
+}
+
 .card{
   background:var(--paper); border:1px solid var(--line);
   border-radius:var(--radius-lg); padding:30px 26px;
@@ -472,6 +487,12 @@ code{
   display:grid; gap:22px;
   grid-template-columns:repeat(auto-fit,minmax(310px,1fr));
   margin-bottom:34px;
+}
+
+/* Mesmo caso do .cards: 310px nao encolhe, e em tela de 320px o card
+   passaria da margem. */
+@media (max-width:640px){
+  .explain{ grid-template-columns:1fr; }
 }
 .explain-card{
   background:var(--paper); border:1px solid var(--line);
