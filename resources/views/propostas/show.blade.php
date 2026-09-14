@@ -1,4 +1,4 @@
-﻿<x-layouts.app>
+<x-layouts.app>
     <div class="p-6 md:p-8 max-w-5xl mx-auto">
         {{-- Header / Actions --}}
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
