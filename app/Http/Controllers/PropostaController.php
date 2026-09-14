@@ -158,7 +158,7 @@ class PropostaController extends Controller
             'cliente_id'    => 'required|integer|exists:clientes,id',
             'titulo'        => 'required|string|max:255',
             'conteudo'      => 'nullable|string',
-            'status'        => 'nullable|in:rascunho,enviada,visualizada,aprovada,recusada,cancelada',
+            'status'        => 'nullable|in:' . Proposta::statusValidos(),
             'data_validade' => 'nullable|date',
             'itens'         => 'nullable|array',
             'itens.*.descricao'      => 'required_with:itens|string',

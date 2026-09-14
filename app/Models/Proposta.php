@@ -14,6 +14,37 @@ class Proposta extends Model
 {
     use HasFactory, SoftDeletes;
 
+    /**
+     * Os status possíveis de uma proposta, e como cada um aparece na tela.
+     *
+     * Chave é o que vai gravado no banco; valor é o rótulo.
+     *
+     * Fica aqui para existir UM lugar só. O dashboard já quebrou por isso: ele
+     * contava propostas com os nomes em inglês ('approved', 'draft'), enquanto
+     * o resto do painel grava em português ('aprovada', 'rascunho'). Nenhum
+     * filtro casava, então o card mostrava sempre zero e o gráfico saía vazio -
+     * sem erro nenhum na tela.
+     */
+    public const STATUS = [
+        'rascunho'    => 'Rascunho',
+        'enviada'     => 'Enviada',
+        'visualizada' => 'Visualizada',
+        'aprovada'    => 'Aprovada',
+        'recusada'    => 'Recusada',
+        'cancelada'   => 'Cancelada',
+    ];
+
+    /** Para usar em regra de validação: 'nullable|in:rascunho,enviada,...' */
+    public static function statusValidos(): string
+    {
+        return implode(',', array_keys(self::STATUS));
+    }
+
+    public static function rotuloDoStatus(?string $status): string
+    {
+        return self::STATUS[$status] ?? ($status ?: '—');
+    }
+
     protected $fillable = [
         'tenant_id',
         'cliente_id',

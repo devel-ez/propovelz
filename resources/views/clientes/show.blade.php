@@ -10,13 +10,16 @@
     @endif
 
     @php
+        // As chaves são os status que o sistema realmente grava (em português,
+        // iguais aos de App\Models\Proposta::STATUS). Estavam em inglês, então
+        // nenhum casava e o selo saía sem rótulo e sem cor.
         $statusProposta = [
-            'draft' => ['Rascunho', 'bg-slate-100 text-slate-600'],
-            'sent' => ['Enviada', 'bg-blue-100 text-blue-700'],
-            'viewed' => ['Visualizada', 'bg-indigo-100 text-indigo-700'],
-            'approved' => ['Aprovada', 'bg-emerald-100 text-emerald-700'],
-            'rejected' => ['Recusada', 'bg-red-100 text-red-700'],
-            'canceled' => ['Cancelada', 'bg-slate-200 text-slate-500'],
+            'rascunho'    => ['Rascunho',    'bg-slate-100 text-slate-600'],
+            'enviada'     => ['Enviada',     'bg-blue-100 text-blue-700'],
+            'visualizada' => ['Visualizada', 'bg-indigo-100 text-indigo-700'],
+            'aprovada'    => ['Aprovada',    'bg-emerald-100 text-emerald-700'],
+            'recusada'    => ['Recusada',    'bg-red-100 text-red-700'],
+            'cancelada'   => ['Cancelada',   'bg-slate-200 text-slate-500'],
         ];
     @endphp
 

@@ -50,8 +50,11 @@ class DashboardController extends Controller
             ->count();
 
         // ── KPI 4: Propostas aprovadas no período ─────────────────────
+        // O status vai em português, igual ao que o resto do painel grava.
+        // Antes estava 'approved', que não existe no banco: o card mostrava
+        // zero mesmo com propostas aprovadas.
         $propostasAprovadas = (clone $propostaQuery)
-            ->where('status', 'approved')
+            ->where('status', 'aprovada')
             ->whereBetween('created_at', [$inicio, $fim])
             ->count();
 
@@ -70,13 +73,32 @@ class DashboardController extends Controller
         }
 
         // ── Gráfico 2: Propostas por status ───────────────────────────
-        $statusLabels = ['draft' => 'Rascunho', 'sent' => 'Enviada',
-                         'viewed' => 'Visualizada', 'approved' => 'Aprovada',
-                         'rejected' => 'Recusada', 'canceled' => 'Cancelada'];
+        // A lista de status vem do model, para o gráfico e o banco não
+        // falarem idiomas diferentes de novo.
         $propostasPorStatus = [];
-        foreach ($statusLabels as $status => $label) {
+        foreach (Proposta::STATUS as $status => $label) {
             $propostasPorStatus[] = [
                 'label' => $label,
+                'count' => (clone $propostaQuery)
+                    ->where('status', $status)
+                    ->whereBetween('created_at', [$inicio, $fim])
+                    ->count(),
+            ];
+        }
+
+        // Rede de segurança: se existir no banco um status fora da lista
+        // (importação, ajuste manual, recurso novo), ele aparece no gráfico
+        // marcado, em vez de sumir sem ninguém perceber.
+        $extras = (clone $propostaQuery)
+            ->whereBetween('created_at', [$inicio, $fim])
+            ->whereNotNull('status')
+            ->whereNotIn('status', array_keys(Proposta::STATUS))
+            ->distinct()
+            ->pluck('status');
+
+        foreach ($extras as $status) {
+            $propostasPorStatus[] = [
+                'label' => $status . ' (fora da lista)',
                 'count' => (clone $propostaQuery)
                     ->where('status', $status)
                     ->whereBetween('created_at', [$inicio, $fim])

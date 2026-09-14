@@ -17,7 +17,7 @@ class StorePropostaRequest extends FormRequest
             'cliente_id'             => 'required|integer|exists:clientes,id',
             'titulo'                 => 'required|string|max:255',
             'conteudo'               => 'nullable|string',
-            'status'                 => 'nullable|in:rascunho,enviada,visualizada,aprovada,recusada,cancelada',
+            'status'                 => 'nullable|in:' . \App\Models\Proposta::statusValidos(),
             'data_validade'          => 'nullable|date',
             'itens'                  => 'nullable|array',
             'itens.*.descricao'      => 'required_with:itens|string|max:1000',
