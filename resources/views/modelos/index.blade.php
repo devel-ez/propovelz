@@ -9,7 +9,7 @@
         </div>
     @endif
 
-    <div class="p-6 md:p-8 max-w-3xl">
+    <div class="p-6 md:p-8 max-w-3xl" x-data="{ novo: {{ $errors->any() ? 'true' : 'false' }} }">
         @if($errors->any())
             <div class="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700 mb-6">
                 <ul class="space-y-0.5 list-disc list-inside">
@@ -19,12 +19,57 @@
         @endif
 
         {{-- Header --}}
-        <div class="mb-8">
-            <h1 class="text-2xl font-bold text-slate-900">Modelos de proposta</h1>
-            <p class="text-sm text-slate-500 mt-0.5">
-                Textos que se repetem de cliente para cliente — cláusulas de contrato, escopos,
-                condições. Em vez de reescrever a cada proposta, você insere o modelo no editor.
-            </p>
+        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">Modelos de proposta</h1>
+                <p class="text-sm text-slate-500 mt-0.5">
+                    Textos que se repetem de cliente para cliente — cláusulas de contrato, escopos,
+                    condições. Escreva aqui uma vez e insira em quantas propostas quiser.
+                </p>
+            </div>
+
+            <button type="button" @click="novo = ! novo"
+                    class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2.5 rounded-xl shadow-sm shadow-blue-200 transition-all text-sm whitespace-nowrap">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                </svg>
+                Novo modelo
+            </button>
+        </div>
+
+        {{-- Formulário de novo modelo --}}
+        <div x-show="novo" x-cloak class="bg-white rounded-2xl border border-blue-200 shadow-sm p-6 mb-8">
+            <h2 class="text-sm font-semibold text-slate-800 mb-4">Novo modelo</h2>
+
+            <form method="POST" action="{{ route('modelos.store') }}" class="space-y-5">
+                @csrf
+
+                <div class="space-y-1.5">
+                    <label for="novo-titulo" class="text-sm font-semibold text-slate-700">Nome do modelo</label>
+                    <input type="text" id="novo-titulo" name="titulo" required maxlength="255"
+                           value="{{ old('titulo') }}"
+                           placeholder="Ex.: Contrato de manutenção — Plano Nós cuidamos"
+                           class="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all">
+                    <p class="text-xs text-slate-400">É o nome que aparece no seletor "Inserir modelo".</p>
+                </div>
+
+                <x-editor id="novo-conteudo"
+                          name="conteudo"
+                          :value="old('conteudo')"
+                          label="Texto do modelo"
+                          hint="Escreva as cláusulas, o escopo, as condições. Use os títulos para separar as seções." />
+
+                <div class="flex items-center justify-end gap-3 pt-1">
+                    <button type="button" @click="novo = false"
+                            class="px-4 py-2.5 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                            class="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-sm shadow-blue-200 transition-colors">
+                        Criar modelo
+                    </button>
+                </div>
+            </form>
         </div>
 
         {{-- Como usar --}}
@@ -34,8 +79,8 @@
             </svg>
             <div class="text-xs text-blue-900 leading-relaxed space-y-1">
                 <p><strong>Inserir numa proposta:</strong> abra ou crie uma proposta e use o seletor <strong>Inserir modelo</strong>, logo abaixo do editor de texto.</p>
-                <p><strong>Criar um modelo novo:</strong> monte o texto numa proposta (o editor tem formatação), depois clique em <strong>Salvar como modelo</strong>, na página de edição dela.</p>
                 <p><strong>Reaproveitar uma proposta inteira:</strong> na lista de propostas, use <strong>Duplicar</strong> — copia o texto e os itens.</p>
+                <p><strong>Criar a partir de um texto pronto:</strong> abra a proposta e clique em <strong>Salvar como modelo</strong>.</p>
                 <p class="pt-1 text-blue-800">Os trechos entre colchetes, como <strong>[NOME OU RAZÃO SOCIAL]</strong>, são para você localizar e substituir ao usar o modelo.</p>
             </div>
         </div>
@@ -51,7 +96,7 @@
                     </div>
                     <p class="font-semibold text-slate-700">Nenhum modelo ainda</p>
                     <p class="text-sm text-slate-400 mt-1 max-w-md">
-                        Escreva um texto numa proposta e clique em <strong>Salvar como modelo</strong> para reaproveitá-lo.
+                        Clique em <strong>Novo modelo</strong> para escrever o primeiro.
                     </p>
                 </div>
             </div>
@@ -62,6 +107,13 @@
                         <div class="flex flex-wrap items-start justify-between gap-3 mb-3">
                             <h2 class="text-sm font-semibold text-slate-800">{{ $modelo->titulo }}</h2>
                             <div class="flex items-center gap-2">
+                                <a href="{{ route('modelos.edit', $modelo) }}"
+                                   class="inline-flex items-center gap-1 text-xs font-semibold text-slate-600 hover:text-blue-600 px-2.5 py-1.5 rounded-lg hover:bg-blue-50 transition-colors">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                    </svg>
+                                    Editar
+                                </a>
                                 <form method="POST" action="{{ route('modelos.destroy', $modelo) }}"
                                       onsubmit="return confirm('Remover o modelo &quot;{{ addslashes($modelo->titulo) }}&quot;?\n\nAs propostas que já usaram o texto não são afetadas.')">
                                     @csrf
@@ -86,16 +138,10 @@
                             </div>
                         </details>
 
-                        <form method="POST" action="{{ route('modelos.update', $modelo) }}" class="flex items-center gap-2 mt-4 pt-4 border-t border-slate-100">
-                            @csrf
-                            @method('PATCH')
-                            <input type="text" name="titulo" value="{{ $modelo->titulo }}" required maxlength="255"
-                                   class="flex-1 px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all">
-                            <button type="submit"
-                                    class="text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-lg transition-colors whitespace-nowrap">
-                                Renomear
-                            </button>
-                        </form>
+                        <p class="text-xs text-slate-400 mt-3 pt-3 border-t border-slate-100">
+                            {{ mb_strlen(trim(strip_tags($modelo->conteudo))) }} caracteres ·
+                            atualizado em {{ $modelo->updated_at->format('d/m/Y \à\s H:i') }}
+                        </p>
                     </div>
                 @endforeach
             </div>

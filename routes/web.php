@@ -93,8 +93,9 @@ Route::middleware('auth')->group(function () {
     // Modelos de proposta: textos que se repetem de cliente para cliente
     Route::get('modelos', [PropostaModeloController::class, 'index'])->name('modelos.index');
     Route::get('modelos/{modelo}/conteudo', [PropostaModeloController::class, 'conteudo'])->name('modelos.conteudo');
+    Route::get('modelos/{modelo}/editar', [PropostaModeloController::class, 'edit'])->name('modelos.edit');
     Route::post('modelos', [PropostaModeloController::class, 'store'])->name('modelos.store');
-    Route::patch('modelos/{modelo}', [PropostaModeloController::class, 'update'])->name('modelos.update');
+    Route::put('modelos/{modelo}', [PropostaModeloController::class, 'update'])->name('modelos.update');
     Route::delete('modelos/{modelo}', [PropostaModeloController::class, 'destroy'])->name('modelos.destroy');
 });
 

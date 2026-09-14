@@ -15,9 +15,9 @@ use Illuminate\View\View;
  * O contrato de manutenção é o caso típico. Em vez de reescrever as cláusulas
  * a cada proposta, o texto fica guardado aqui e é inserido no editor.
  *
- * A criação de modelo se dá a partir de uma proposta existente: você ajusta o
- * texto no editor (que já tem o Quill), e salva como modelo. Assim não há um
- * segundo editor para manter, e o modelo nasce exatamente do que você escreveu.
+ * Há dois caminhos para criar um modelo, e os dois terminam no mesmo lugar:
+ *   - escrever direto aqui, na página de modelos (criar ou editar)
+ *   - salvar o texto de uma proposta existente, pela página de edição dela
  */
 class PropostaModeloController extends Controller
 {
@@ -44,38 +44,52 @@ class PropostaModeloController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $data = $request->validate([
-            'proposta_id' => 'required|integer|exists:propostas,id',
+        // Dois modos: escrevendo aqui (titulo + conteudo), ou salvando o texto
+        // de uma proposta existente (proposta_id + titulo).
+        $dados = $request->validate([
             'titulo'      => 'required|string|max:255',
-        ], [], ['titulo' => 'nome do modelo']);
+            'conteudo'    => 'nullable|string',
+            'proposta_id' => 'nullable|integer|exists:propostas,id',
+        ], [], ['titulo' => 'nome do modelo', 'conteudo' => 'texto do modelo']);
 
-        $proposta = Proposta::findOrFail($data['proposta_id']);
+        $conteudo = $dados['conteudo'] ?? null;
 
-        if (trim((string) $proposta->conteudo) === '') {
-            return back()->withErrors([
-                'titulo' => 'Esta proposta está sem conteúdo. Escreva o texto antes de salvar como modelo.',
-            ]);
+        if (empty(trim((string) $conteudo)) && ! empty($dados['proposta_id'])) {
+            $conteudo = Proposta::find($dados['proposta_id'])?->conteudo;
+        }
+
+        if (empty(trim((string) $conteudo))) {
+            return back()
+                ->withInput()
+                ->withErrors(['conteudo' => 'Escreva o texto do modelo antes de salvar.']);
         }
 
         PropostaModelo::create([
-            'tenant_id' => $proposta->tenant_id,
-            'titulo'    => $data['titulo'],
-            'conteudo'  => $proposta->conteudo,
+            'tenant_id' => 1,
+            'titulo'    => $dados['titulo'],
+            'conteudo'  => $conteudo,
         ]);
 
         return redirect()->route('modelos.index')
-            ->with('success', "Modelo \"{$data['titulo']}\" salvo. Já está disponível para inserir em qualquer proposta.");
+            ->with('success', "Modelo \"{$dados['titulo']}\" salvo. Já está disponível no seletor Inserir modelo.");
+    }
+
+    public function edit(PropostaModelo $modelo): View
+    {
+        return view('modelos.edit', compact('modelo'));
     }
 
     public function update(Request $request, PropostaModelo $modelo): RedirectResponse
     {
-        $data = $request->validate([
-            'titulo' => 'required|string|max:255',
-        ], [], ['titulo' => 'nome do modelo']);
+        $dados = $request->validate([
+            'titulo'   => 'required|string|max:255',
+            'conteudo' => 'required|string',
+        ], [], ['titulo' => 'nome do modelo', 'conteudo' => 'texto do modelo']);
 
-        $modelo->update(['titulo' => $data['titulo']]);
+        $modelo->update($dados);
 
-        return back()->with('success', 'Modelo renomeado.');
+        return redirect()->route('modelos.index')
+            ->with('success', "Modelo \"{$modelo->titulo}\" atualizado.");
     }
 
     public function destroy(PropostaModelo $modelo): RedirectResponse
@@ -83,6 +97,6 @@ class PropostaModeloController extends Controller
         $titulo = $modelo->titulo;
         $modelo->delete();
 
-        return back()->with('success', "Modelo \"{$titulo}\" removido.");
+        return back()->with('success', "Modelo \"{$titulo}\" removido. As propostas que já usaram o texto não são afetadas.");
     }
 }

@@ -72,28 +72,11 @@
 
 {{-- Conteúdo / Editor de texto --}}
 <div class="space-y-1.5">
-    <label class="text-sm font-semibold text-slate-700">Conteúdo da Proposta</label>
-    <p class="text-xs text-slate-400">Use o editor abaixo para escrever a apresentação, escopo, condições, etc.</p>
-    {{-- Quill toolbar + editor --}}
-    <div id="quill-toolbar" class="border border-slate-200 rounded-t-xl bg-slate-50 px-2 py-1 flex flex-wrap gap-1">
-        <button type="button" class="ql-bold p-1 rounded hover:bg-slate-200 text-slate-600 font-bold text-sm">B</button>
-        <button type="button" class="ql-italic p-1 rounded hover:bg-slate-200 text-slate-600 italic text-sm">I</button>
-        <button type="button" class="ql-underline p-1 rounded hover:bg-slate-200 text-slate-600 underline text-sm">U</button>
-        <span class="w-px bg-slate-300 mx-1 self-stretch"></span>
-        <button type="button" class="ql-list p-1 rounded hover:bg-slate-200 text-slate-600 text-sm" value="ordered">1.</button>
-        <button type="button" class="ql-list p-1 rounded hover:bg-slate-200 text-slate-600 text-sm" value="bullet">•</button>
-        <span class="w-px bg-slate-300 mx-1 self-stretch"></span>
-        <select class="ql-header text-xs border border-slate-200 rounded px-1 bg-white">
-            <option value="">Normal</option>
-            <option value="1">Título 1</option>
-            <option value="2">Título 2</option>
-            <option value="3">Título 3</option>
-        </select>
-    </div>
-    <div id="quill-editor"
-         class="border border-t-0 border-slate-200 rounded-b-xl bg-white min-h-[200px] px-4 py-3 text-sm text-slate-700 focus:outline-none"
-         style="min-height:200px">{!! old('conteudo', $p?->conteudo) !!}</div>
-    <input type="hidden" id="conteudo-hidden" name="conteudo" value="{{ old('conteudo', $p?->conteudo) }}">
+    <x-editor id="conteudo"
+              name="conteudo"
+              :value="$p?->conteudo"
+              label="Conteúdo da Proposta"
+              hint="Use o editor abaixo para escrever a apresentação, escopo, condições, etc." />
 
     @if(isset($modelos) && $modelos->isNotEmpty())
         <div class="flex flex-wrap items-center gap-2 pt-2">
@@ -200,51 +183,20 @@
     <input type="hidden" name="valor_total" id="valor_total_hidden" value="{{ $p?->valor_total ?? 0 }}">
 </div>
 
-{{-- ===== Scripts Quill + Items JS ===== --}}
-<link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
-<script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+{{-- ===== Itens JS (o editor de texto vem do componente x-editor) ===== --}}
 <script>
 (function () {
-    // -------- QUILL EDITOR --------
-    const quill = new Quill('#quill-editor', {
-        modules: { toolbar: '#quill-toolbar' },
-        theme: 'snow',
-    });
-
-    // -------- SINCRONIZAR O CONTEÚDO COM O CAMPO OCULTO --------
-    //
-    // O campo oculto fica DENTRO do formulário da proposta, então partimos
-    // dele com closest(). Antes isto usava document.querySelector('form'),
-    // que devolve o PRIMEIRO formulário da página — e o primeiro é o botão
-    // de sair, na barra lateral. O listener ficava no formulário errado e o
-    // texto do Quill nunca era copiado: a proposta salvava vazia.
-    const conteudoHidden = document.getElementById('conteudo-hidden');
-    const formProposta   = conteudoHidden.closest('form');
-
-    function sincronizarConteudo() {
-        conteudoHidden.value = quill.root.innerHTML;
-    }
-
-    // Mantém o campo atualizado a cada digitação, sem depender do submit
-    quill.on('text-change', sincronizarConteudo);
-
-    if (formProposta) {
-        formProposta.addEventListener('submit', sincronizarConteudo);
-    } else {
-        // Se isto aparecer no console, o campo oculto saiu de dentro do form
-        // e o conteúdo voltaria a não salvar.
-        console.error('Campo conteudo-hidden não está dentro de um formulário.');
-    }
-
-    // Garante que o campo já nasce com o que está no editor (modo edição)
-    sincronizarConteudo();
+    // O editor é criado pelo componente x-editor, que expõe o Quill e a
+    // função de sincronizar. Aqui só consumimos.
+    const editor = window.editor_conteudo;
+    const quill  = editor ? editor.quill : null;
 
     // -------- INSERIR MODELO --------
     // O conteúdo vem por requisição, e não embutido na página: com vários
     // modelos, embutir todos engordaria a página de toda proposta aberta.
     const seletorModelo = document.getElementById('modelo-select');
 
-    if (seletorModelo) {
+    if (seletorModelo && quill) {
         seletorModelo.addEventListener('change', async function () {
             const id = this.value;
             if (!id) return;
@@ -268,7 +220,7 @@
 
                 const dados = await resposta.json();
                 quill.clipboard.dangerouslyPasteHTML(dados.conteudo || '');
-                sincronizarConteudo();
+                if (editor) editor.sincronizar();
             } catch (e) {
                 alert('Não consegui carregar o modelo "' + escolhido + '". Tente de novo.');
                 console.error(e);
