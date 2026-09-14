@@ -197,11 +197,33 @@
         theme: 'snow',
     });
 
-    // Sinc Quill → hidden input antes de enviar o form
-    const form = document.querySelector('form');
-    form.addEventListener('submit', function () {
-        document.getElementById('conteudo-hidden').value = quill.root.innerHTML;
-    });
+    // -------- SINCRONIZAR O CONTEÚDO COM O CAMPO OCULTO --------
+    //
+    // O campo oculto fica DENTRO do formulário da proposta, então partimos
+    // dele com closest(). Antes isto usava document.querySelector('form'),
+    // que devolve o PRIMEIRO formulário da página — e o primeiro é o botão
+    // de sair, na barra lateral. O listener ficava no formulário errado e o
+    // texto do Quill nunca era copiado: a proposta salvava vazia.
+    const conteudoHidden = document.getElementById('conteudo-hidden');
+    const formProposta   = conteudoHidden.closest('form');
+
+    function sincronizarConteudo() {
+        conteudoHidden.value = quill.root.innerHTML;
+    }
+
+    // Mantém o campo atualizado a cada digitação, sem depender do submit
+    quill.on('text-change', sincronizarConteudo);
+
+    if (formProposta) {
+        formProposta.addEventListener('submit', sincronizarConteudo);
+    } else {
+        // Se isto aparecer no console, o campo oculto saiu de dentro do form
+        // e o conteúdo voltaria a não salvar.
+        console.error('Campo conteudo-hidden não está dentro de um formulário.');
+    }
+
+    // Garante que o campo já nasce com o que está no editor (modo edição)
+    sincronizarConteudo();
 
     // -------- ITEMS TABLE --------
     const tbody   = document.getElementById('itens-tbody');
