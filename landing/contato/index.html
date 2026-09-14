@@ -38,7 +38,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="/assets/css/styles.css?v=6">
+<link rel="stylesheet" href="/assets/css/styles.css?v=7">
 
 <script>document.documentElement.classList.add('js');</script>
 
@@ -82,54 +82,150 @@
       <span class="brand-name">Crie Sites <strong>Pro</strong></span>
     </a>
 
-    <a class="btn btn-ghost btn-sm" href="/">Voltar ao site</a>
+    <a class="btn btn-ghost-light btn-sm" href="/">Voltar ao site</a>
   </div>
 </header>
 
 <main>
-  <!-- ============ CONTATO ============ -->
-  <section class="page-contato" id="contato">
-    <div class="container container-narrow">
-      <div class="contact-card reveal">
 
-        <span class="eyebrow">Contato</span>
+  <!-- ============ HERO ============
+       Mesma estrutura da página inicial: fundo escuro, grade, brilhos e
+       eyebrow com ponto. É isso que faz a página parecer do mesmo site —
+       uma versão anterior usava um cartão branco e destoava. -->
+  <section class="hero" id="contato">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-grid"></div>
+      <div class="hero-glow hero-glow-1"></div>
+      <div class="hero-glow hero-glow-2"></div>
+    </div>
 
-        <h1 class="contact-title">Obrigado pelo seu interesse</h1>
+    <div class="container hero-inner">
+      <p class="eyebrow reveal">
+        <span class="dot" aria-hidden="true"></span>
+        Contato &middot; Fale com o desenvolvedor
+      </p>
 
-        <p class="contact-lead">
-          É um prazer ter você aqui. Se você chegou até esta página, provavelmente
-          está pensando em tirar um projeto do papel — e é exatamente disso que
-          a gente gosta de conversar.
+      <h1 class="reveal">
+        Obrigado pelo<br>
+        <span class="grad">seu interesse</span>.
+      </h1>
+
+      <p class="hero-sub reveal">
+        É um prazer ter você aqui. <strong>Entre em contato com o desenvolvedor</strong> —
+        sem formulário longo, sem reunião obrigatória e sem compromisso: você conta o que
+        precisa pelo WhatsApp e a gente responde.
+      </p>
+
+      <div class="hero-actions reveal">
+        <a class="btn btn-wa btn-lg" href="https://wa.me/5521980649966?text=Ol%C3%A1%21%20Vim%20pela%20p%C3%A1gina%20de%20contato%20e%20quero%20falar%20sobre%20um%20projeto." target="_blank" rel="noopener">
+          <svg class="ico-wa" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91S17.5 2 12.04 2Zm5.8 14.03c-.24.68-1.4 1.3-1.94 1.35-.5.05-1.12.07-1.8-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.14-4.9-4.33-.14-.19-1.17-1.56-1.17-2.98s.74-2.11 1-2.4c.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.57.81 1.99.88 2.13.07.14.12.31.02.5-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.14-.3.3-.13.59.17.29.75 1.24 1.62 2.01 1.11.99 2.05 1.3 2.34 1.44.29.15.46.12.63-.07.17-.19.73-.85.92-1.14.19-.29.39-.24.65-.14.26.09 1.68.79 1.97.94.29.14.48.22.55.34.07.13.07.73-.17 1.41Z"/></svg>
+          Falar no WhatsApp
+        </a>
+        <a class="btn btn-ghost-light btn-lg" href="/#precos">Ver planos e preços</a>
+      </div>
+
+      <ul class="hero-facts reveal">
+        <li><strong>1 dia útil</strong><span>prazo de resposta</span></li>
+        <li><strong>WhatsApp</strong><span>você fala com quem constrói</span></li>
+        <li><strong>Sem compromisso</strong><span>orçamento por escrito</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ FAIXA ============ -->
+  <section class="strip" aria-label="O que fazemos">
+    <div class="container strip-inner">
+      <span>Landing pages de conversão</span>
+      <span aria-hidden="true">•</span>
+      <span>Sites institucionais</span>
+      <span aria-hidden="true">•</span>
+      <span>Lojas e catálogos</span>
+      <span aria-hidden="true">•</span>
+      <span>Sistemas web</span>
+      <span aria-hidden="true">•</span>
+      <span>Automações e integrações</span>
+    </div>
+  </section>
+
+  <!-- ============ CANAIS ============ -->
+  <section class="section" id="canais">
+    <div class="container">
+      <header class="section-head reveal">
+        <p class="eyebrow">Canais</p>
+        <h2>Como falar com a gente</h2>
+        <p class="section-sub">
+          Escolha o canal que preferir. O WhatsApp é o mais rápido — e é onde você
+          fala direto com quem vai construir o seu site.
         </p>
+      </header>
 
-        <p class="contact-lead">
-          <strong>Entre em contato com o desenvolvedor.</strong> Sem formulário
-          longo, sem reunião obrigatória e sem compromisso: você conta o que
-          precisa pelo WhatsApp e a gente responde.
-        </p>
+      <div class="cards">
+        <article class="card reveal">
+          <div class="card-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91S17.5 2 12.04 2Zm5.8 14.03c-.24.68-1.4 1.3-1.94 1.35-.5.05-1.12.07-1.8-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.14-4.9-4.33-.14-.19-1.17-1.56-1.17-2.98s.74-2.11 1-2.4c.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.57.81 1.99.88 2.13.07.14.12.31.02.5-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.14-.3.3-.13.59.17.29.75 1.24 1.62 2.01 1.11.99 2.05 1.3 2.34 1.44.29.15.46.12.63-.07.17-.19.73-.85.92-1.14.19-.29.39-.24.65-.14.26.09 1.68.79 1.97.94.29.14.48.22.55.34.07.13.07.73-.17 1.41Z"/></svg>
+          </div>
+          <h3>WhatsApp</h3>
+          <p>
+            O caminho mais direto. Você conta o que precisa e já recebe um retorno
+            com o plano que combina com o seu caso — <strong>em até 1 dia útil</strong>.
+          </p>
+          <ul class="card-list">
+            <li>+55 21 98064-9966</li>
+            <li>Atendimento direto com o desenvolvedor</li>
+          </ul>
+          <p style="margin-top:22px">
+            <a class="btn btn-wa" href="https://wa.me/5521980649966?text=Ol%C3%A1%21%20Vim%20pela%20p%C3%A1gina%20de%20contato%20e%20quero%20falar%20sobre%20um%20projeto." target="_blank" rel="noopener">
+              <svg class="ico-wa" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91S17.5 2 12.04 2Zm5.8 14.03c-.24.68-1.4 1.3-1.94 1.35-.5.05-1.12.07-1.8-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.14-4.9-4.33-.14-.19-1.17-1.56-1.17-2.98s.74-2.11 1-2.4c.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.57.81 1.99.88 2.13.07.14.12.31.02.5-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.14-.3.3-.13.59.17.29.75 1.24 1.62 2.01 1.11.99 2.05 1.3 2.34 1.44.29.15.46.12.63-.07.17-.19.73-.85.92-1.14.19-.29.39-.24.65-.14.26.09 1.68.79 1.97.94.29.14.48.22.55.34.07.13.07.73-.17 1.41Z"/></svg>
+              Abrir conversa
+            </a>
+          </p>
+        </article>
 
-        <div class="contact-actions">
-          <a class="btn btn-wa btn-lg"
-             href="https://wa.me/5521980649966?text=Ol%C3%A1%21%20Vim%20pela%20p%C3%A1gina%20de%20contato%20e%20quero%20falar%20sobre%20um%20projeto."
-             target="_blank" rel="noopener">
-            <svg class="ico-wa" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width="20" height="20">
-              <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91S17.5 2 12.04 2Zm5.8 14.03c-.24.68-1.4 1.3-1.94 1.35-.5.05-1.12.07-1.8-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.14-4.9-4.33-.14-.19-1.17-1.56-1.17-2.98s.74-2.11 1-2.4c.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.57.81 1.99.88 2.13.07.14.12.31.02.5-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.14-.3.3-.13.59.17.29.75 1.24 1.62 2.01 1.11.99 2.05 1.3 2.34 1.44.29.15.46.12.63-.07.17-.19.73-.85.92-1.14.19-.29.39-.24.65-.14.26.09 1.68.79 1.97.94.29.14.48.22.55.34.07.13.07.73-.17 1.41Z"/>
-            </svg>
-            Falar no WhatsApp
-          </a>
-
-          <p class="contact-phone">+55 21 98064-9966</p>
-        </div>
-
-        <p class="contact-note">
-          Respondemos em até <strong>1 dia útil</strong>. Se preferir e-mail,
-          escreva para
-          <a href="mailto:contato@criesitespro.com.br">contato@criesitespro.com.br</a>.
-        </p>
-
+        <article class="card reveal">
+          <div class="card-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l7.89 5.26a2 2 0 0 0 2.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"/></svg>
+          </div>
+          <h3>E-mail</h3>
+          <p>
+            Para assuntos que pedem registro: contratos, notas fiscais, documentos e
+            propostas formais.
+          </p>
+          <ul class="card-list">
+            <li>contato@criesitespro.com.br</li>
+            <li>Mesmo prazo de resposta: até 1 dia útil</li>
+          </ul>
+          <p style="margin-top:22px">
+            <a class="btn btn-ghost" href="mailto:contato@criesitespro.com.br">Enviar e-mail</a>
+          </p>
+        </article>
       </div>
     </div>
   </section>
+
+  <!-- ============ CTA FINAL ============ -->
+  <section class="cta-final">
+    <div class="cta-bg" aria-hidden="true">
+      <div class="hero-glow hero-glow-1"></div>
+      <div class="hero-glow hero-glow-2"></div>
+    </div>
+    <div class="container container-narrow cta-inner">
+      <h2 class="reveal">Vamos tirar seu projeto do papel?</h2>
+      <p class="reveal">
+        Mande uma mensagem contando o que você precisa. Em poucas conversas a gente
+        entende o seu caso e diz quanto custa — sem enrolação e sem compromisso.
+      </p>
+      <div class="hero-actions reveal">
+        <a class="btn btn-wa btn-lg" href="https://wa.me/5521980649966?text=Ol%C3%A1%21%20Vim%20pela%20p%C3%A1gina%20de%20contato%20e%20quero%20falar%20sobre%20um%20projeto." target="_blank" rel="noopener">
+          <svg class="ico-wa" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91S17.5 2 12.04 2Zm5.8 14.03c-.24.68-1.4 1.3-1.94 1.35-.5.05-1.12.07-1.8-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.14-4.9-4.33-.14-.19-1.17-1.56-1.17-2.98s.74-2.11 1-2.4c.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.57.81 1.99.88 2.13.07.14.12.31.02.5-.1.19-.15.31-.29.48-.15.17-.31.38-.44.51-.15.14-.3.3-.13.59.17.29.75 1.24 1.62 2.01 1.11.99 2.05 1.3 2.34 1.44.29.15.46.12.63-.07.17-.19.73-.85.92-1.14.19-.29.39-.24.65-.14.26.09 1.68.79 1.97.94.29.14.48.22.55.34.07.13.07.73-.17 1.41Z"/></svg>
+          Falar no WhatsApp agora
+        </a>
+      </div>
+      <p class="cta-phone reveal">
+        Ou salve o número: <a href="tel:+5521980649966">+55 21 98064-9966</a>
+      </p>
+    </div>
+  </section>
+
 </main>
 
 <!-- ============ RODAPÉ ============ -->
@@ -152,6 +248,16 @@
       </p>
     </div>
 
+    <nav class="footer-col" aria-label="Navegação do rodapé">
+      <h4>Navegação</h4>
+      <ul>
+        <li><a href="/">Início</a></li>
+        <li><a href="/#servicos">Serviços</a></li>
+        <li><a href="/#precos">Preços</a></li>
+        <li><a href="/#faq">FAQ</a></li>
+      </ul>
+    </nav>
+
     <div class="footer-col">
       <h4>Contato</h4>
       <ul>
@@ -161,16 +267,6 @@
           </a>
         </li>
         <li><a href="mailto:contato@criesitespro.com.br">contato@criesitespro.com.br</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-col">
-      <h4>Navegação</h4>
-      <ul>
-        <li><a href="/#servicos">Serviços</a></li>
-        <li><a href="/#precos">Preços</a></li>
-        <li><a href="/#faq">FAQ</a></li>
-        <li><a href="/contato/">Contato</a></li>
       </ul>
     </div>
   </div>
