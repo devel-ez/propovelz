@@ -15,26 +15,31 @@
                     <p class="text-sm text-slate-500 mt-0.5">Visão geral do negócio</p>
                 </div>
 
-                {{-- Filtro em linha --}}
-                <form method="GET" action="{{ route('dashboard') }}"
-                      class="flex flex-wrap items-center gap-2">
+                {{-- Filtro em linha
+                     Os botões de período são LINKS, e ficam fora do formulário.
+                     Antes eram <button name="periodo"> dentro dele, junto com um
+                     <input type="hidden" name="periodo"> que serve para o select
+                     de cliente não perder o período. Os dois campos com o mesmo
+                     nome eram enviados juntos, e o PHP fica com o último - o
+                     oculto, que trazia o período ATUAL. Por isso clicar num
+                     botão não mudava nada. --}}
+                <div class="flex flex-wrap items-center gap-2">
 
                     {{-- Período --}}
                     <div class="inline-flex rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm text-sm font-medium">
                         @foreach ([1 => '1 mês', 3 => '3 meses', 6 => '6 meses', 12 => '12 meses'] as $val => $label)
-                            <button type="submit" name="periodo" value="{{ $val }}"
-                                    @if($clienteId) onclick="this.form.querySelector('[name=cliente_id]').disabled=false" @endif
-                                    class="px-4 py-2 transition-colors
-                                        {{ $periodo == $val
-                                            ? 'bg-brand-600 text-white'
-                                            : 'text-slate-600 hover:bg-slate-50' }}">
+                            <a href="{{ route('dashboard', array_filter(['periodo' => $val, 'cliente_id' => $clienteId])) }}"
+                               class="px-4 py-2 whitespace-nowrap transition-colors
+                                   {{ $periodo == $val
+                                       ? 'bg-brand-600 text-white'
+                                       : 'text-slate-600 hover:bg-slate-50' }}">
                                 {{ $label }}
-                            </button>
+                            </a>
                         @endforeach
                     </div>
 
                     {{-- Cliente --}}
-                    <div class="flex items-center gap-2">
+                    <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-2">
                         <select name="cliente_id"
                                 onchange="this.form.submit()"
                                 class="text-sm border border-slate-200 rounded-xl bg-white px-3 py-2 text-slate-700 focus:ring-2 focus:ring-brand-100 focus:border-brand-500 outline-none shadow-sm">
@@ -45,10 +50,10 @@
                                 </option>
                             @endforeach
                         </select>
-                        {{-- Preserve período no submit via select --}}
+                        {{-- O select sozinho não carrega o período: este campo o preserva. --}}
                         <input type="hidden" name="periodo" value="{{ $periodo }}">
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
 
             {{-- ── KPI Cards ─────────────────────────────────────────────────── --}}
