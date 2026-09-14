@@ -100,14 +100,16 @@
                 {{-- Header Documento --}}
                 <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-6 border-b border-slate-100 pb-8 mb-8">
                     <div class="flex items-center gap-4">
-                        <div class="w-16 h-16 bg-slate-900 text-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        <div class="w-16 h-16 bg-gradient-to-br from-brand-600 to-cyan-500 text-white rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
+                            <svg class="w-8 h-8" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
+                                <path d="M6 12.5 16 6l10 6.5v2.2L16 8.2 6 14.7v-2.2Z"/>
+                                <path d="M6 19.4 16 12.9l10 6.5v2.2L16 15.1 6 21.6v-2.2Z" opacity=".6"/>
+                                <path d="M6 25.8 16 19.3l10 6.5V28L16 21.5 6 28v-2.2Z" opacity=".35"/>
                             </svg>
                         </div>
                         <div>
                             <h2 class="text-2xl font-black text-slate-900 leading-tight">{{ $proposta->titulo }}</h2>
-                            <p class="text-sm font-semibold text-brand-600 mt-1">Sua Empresa S/A.</p>
+                            <p class="text-sm font-semibold text-brand-600 mt-1">Crie Sites Pro</p>
                         </div>
                     </div>
                     

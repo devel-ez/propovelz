@@ -224,8 +224,8 @@
     <div class="header-bar">
         <div class="header-top">
             <div>
-                <div class="company-name">Propovelz</div>
-                <div class="company-tagline">Sistema de Gestão de Propostas e Faturas</div>
+                <div class="company-name">Crie Sites Pro</div>
+                <div class="company-tagline">Criação de sites, landing pages e sistemas</div>
             </div>
             <div class="invoice-label">
                 <div class="word">Fatura</div>
@@ -340,7 +340,7 @@
 
     {{-- ─── FOOTER ─── --}}
     <div class="footer">
-        <div class="footer-note">Documento gerado automaticamente pelo Propovelz</div>
+        <div class="footer-note">Documento gerado automaticamente por Crie Sites Pro</div>
         <div class="footer-generated">{{ now()->format('d/m/Y H:i') }}</div>
     </div>
 </body>

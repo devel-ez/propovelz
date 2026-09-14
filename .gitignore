@@ -20,3 +20,7 @@ yarn-error.log
 # Pacote de deploy gerado localmente
 /deploy/*.zip
 /deploy/staging/
+
+# Scripts temporarios de deploy (nunca versionar)
+/deploy/_*.php
+/deploy/_*.js

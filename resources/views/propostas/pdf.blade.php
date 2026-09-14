@@ -42,7 +42,7 @@
             right: 0;
             width: 400px;
             height: 300px;
-            background-color: #0f172a; /* Dark Blue */
+            background-color: #0a0f1c; /* Azul quase preto da marca */
         }
         .shape-top-right-triangle {
             position: absolute;
@@ -50,7 +50,7 @@
             right: 0;
             width: 0;
             height: 0;
-            border-top: 150px solid #0f172a;
+            border-top: 150px solid #0a0f1c;
             border-left: 400px solid transparent;
         }
         .shape-bottom {
@@ -59,7 +59,7 @@
             left: 0;
             width: 100%;
             height: 180px;
-            background-color: #1d4ed8; /* Blue */
+            background-color: #2563eb; /* Azul da marca */
         }
         .shape-bottom-triangle {
             position: absolute;
@@ -67,7 +67,7 @@
             left: 0;
             width: 0;
             height: 0;
-            border-bottom: 120px solid #1d4ed8;
+            border-bottom: 120px solid #2563eb;
             border-right: 800px solid transparent;
         }
         .cover-content-wrapper {
@@ -80,7 +80,7 @@
         .cover-logo {
             font-size: 32px;
             font-weight: 900;
-            color: #0f172a;
+            color: #0a0f1c;
             margin-bottom: 80px;
             letter-spacing: -0.5px;
         }
@@ -93,8 +93,8 @@
             text-transform: uppercase;
             letter-spacing: -1px;
         }
-        .cover-title .dark { color: #0f172a; }
-        .cover-title .red { color: #ef4444; }
+        .cover-title .dark { color: #0a0f1c; }
+        .cover-title .accent { color: #2563eb; }
         
         .cover-subtitle {
             font-size: 20px;
@@ -103,7 +103,7 @@
             margin-top: 25px;
             margin-bottom: 40px;
             text-transform: uppercase;
-            border-left: 5px solid #ef4444;
+            border-left: 5px solid #2563eb;
             padding-left: 15px;
             line-height: 1.4;
         }
@@ -121,7 +121,7 @@
             font-weight: 500;
         }
         .cover-bullets td.bullet {
-            color: #1d4ed8;
+            color: #2563eb;
             padding-right: 15px;
             font-size: 20px;
             width: 25px;
@@ -230,7 +230,7 @@
             margin-bottom: 5px;
             height: 40px;
             font-size: 20px;
-            color: #1d4ed8;
+            color: #2563eb;
             font-style: italic;
         }
         .signature-name {
@@ -266,14 +266,14 @@
 
         <div class="cover-content-wrapper">
             <div class="cover-logo">
-                <span class="red" style="color: #ef4444;">&lt;/&gt;</span> VelTech Systems
+                <span style="display: inline-block; width: 14px; height: 14px; background: #2563eb; border-radius: 4px; margin-right: 10px;"></span>Crie Sites <span style="color: #2563eb;">Pro</span>
             </div>
 
             <div class="cover-title">
                 <span class="dark">PROPOSTA</span><br>
                 <span class="dark">COMERCIAL</span><br>
-                <span class="red">DESENVOLVIMENTO E</span><br>
-                <span class="red">MANUTENÇÃO</span><br>
+                <span class="accent">DESENVOLVIMENTO E</span><br>
+                <span class="accent">MANUTENÇÃO</span><br>
                 <span class="dark">DE SOFTWARE</span>
             </div>
 
@@ -302,8 +302,8 @@
         <div class="cover-bottom-area">
             <table>
                 <tr>
-                    <td style="background: white; color: #1d4ed8; padding: 12px 18px; border-radius: 8px; font-weight: bold; font-size: 24px; text-align: center;">
-                        <span style="font-family: 'Courier New', Courier, monospace;">{;}</span>
+                    <td style="background: white; color: #2563eb; padding: 12px 18px; border-radius: 8px; font-weight: bold; font-size: 24px; text-align: center;">
+                        <span style="font-family: Helvetica, Arial, sans-serif;">CS</span>
                     </td>
                     <td style="padding-left: 20px; color: white; font-weight: bold; font-size: 14px; letter-spacing: 1px; line-height: 1.4;">
                         PRESTAÇÃO DE SERVIÇOS EM<br>TECNOLOGIA DA INFORMAÇÃO
@@ -316,7 +316,7 @@
     <div class="page-content">
         <div class="header">
             <h1>{{ $proposta->titulo }}</h1>
-            <p>VelTech Systems</p>
+            <p>Crie Sites Pro</p>
         </div>
 
     <table class="meta-info">
@@ -383,7 +383,7 @@
     <div class="signature-section">
         <div style="float: left; width: 55%; font-size: 12px; line-height: 1.5; color: #64748b; padding-top: 20px;">
             <p style="margin: 0 0 10px 0;"><strong>Confidencialidade:</strong> Este documento tem validade legal e os valores comerciais aqui descritos são de caráter estritamente confidencial.</p>
-            <p style="margin: 0;"><strong>Suporte:</strong> Dúvidas? Entre em contato conosco através do canal de atendimento exclusivo da VelTech Systems.</p>
+            <p style="margin: 0;"><strong>Suporte:</strong> Dúvidas? Entre em contato conosco através do canal de atendimento exclusivo da Crie Sites Pro.</p>
         </div>
         
         <div class="signature-box">
