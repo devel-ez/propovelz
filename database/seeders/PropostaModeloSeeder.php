@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace Database\Seeders;
 
@@ -36,11 +36,11 @@ class PropostaModeloSeeder extends Seeder
     {
         return [
             [
-                'titulo' => 'Contrato de Manutenção e Hospedagem — Plano Nós cuidamos',
+                'titulo' => 'Contrato de Manutenção e Hospedagem - Plano Nós cuidamos',
                 'conteudo' => $this->contratoManutencao(),
             ],
             [
-                'titulo' => 'Escopo — Landing Page (plano Só o site)',
+                'titulo' => 'Escopo - Landing Page (plano Só o site)',
                 'conteudo' => $this->escopoSite(),
             ],
         ];
@@ -51,7 +51,7 @@ class PropostaModeloSeeder extends Seeder
     private function contratoManutencao(): string
     {
         return <<<'HTML'
-<p><strong>Contratada:</strong> Crie Sites Pro — criesitespro.com.br — contato@criesitespro.com.br — WhatsApp (21) 98064-9966</p>
+<p><strong>Contratada:</strong> Crie Sites Pro - criesitespro.com.br - contato@criesitespro.com.br - WhatsApp (21) 98064-9966</p>
 <p><strong>Contratante:</strong> [NOME OU RAZÃO SOCIAL], [CPF/CNPJ], [ENDEREÇO]</p>
 <p><strong>Site objeto deste contrato:</strong> [DOMÍNIO]</p>
 
@@ -86,16 +86,16 @@ class PropostaModeloSeeder extends Seeder
 <p><strong>Conteúdo e suporte</strong></p>
 <ul>
 <li>Alteração de <strong>textos</strong>, <strong>imagens</strong> e <strong>vídeos</strong></li>
-<li><strong>Ajustes simples de design</strong> — cores, espaçamentos e ordem de elementos</li>
+<li><strong>Ajustes simples de design</strong> - cores, espaçamentos e ordem de elementos</li>
 <li>Suporte direto pelo WhatsApp (21) 98064-9966, com quem construiu o Site</li>
 </ul>
 
 <h2>3. O que não está incluso</h2>
 <p>Não integram este contrato, sendo objeto de <strong>proposta à parte</strong>:</p>
 <ul>
-<li>Novas funcionalidades — áreas de cliente, cálculos, módulos</li>
-<li>Mudanças complexas de design — redesenho de páginas ou do layout</li>
-<li>Novas páginas e sistemas — ampliação do escopo original</li>
+<li>Novas funcionalidades - áreas de cliente, cálculos, módulos</li>
+<li>Mudanças complexas de design - redesenho de páginas ou do layout</li>
+<li>Novas páginas e sistemas - ampliação do escopo original</li>
 </ul>
 <p>Nesses casos a Contratada avalia o esforço, envia proposta com escopo, prazo e valor por escrito, e <strong>nada é executado sem a aprovação da Contratante</strong>.</p>
 
@@ -110,7 +110,7 @@ class PropostaModeloSeeder extends Seeder
 
 <h2>5. Vigência e compromisso mínimo</h2>
 <p>O compromisso mínimo é de <strong>5 (cinco) mensalidades</strong>.</p>
-<p><strong>Depois de cumprido o mínimo</strong>, o contrato <strong>continua valendo automaticamente</strong> por prazo indeterminado — a mensalidade segue custeando hospedagem, domínio, segurança, backup e ajustes. A Contratante pode encerrar quando quiser, sem multa.</p>
+<p><strong>Depois de cumprido o mínimo</strong>, o contrato <strong>continua valendo automaticamente</strong> por prazo indeterminado - a mensalidade segue custeando hospedagem, domínio, segurança, backup e ajustes. A Contratante pode encerrar quando quiser, sem multa.</p>
 <p><strong>Antes de cumprido o mínimo</strong>, a Contratante pode encerrar mediante o <strong>pagamento antecipado das mensalidades restantes</strong>, ficando liberada do vínculo e do Site.</p>
 
 <h2>6. Propriedade</h2>
@@ -163,9 +163,9 @@ class PropostaModeloSeeder extends Seeder
 <p><strong>Em qualquer caso de rescisão:</strong> a Contratada entrega à Contratante os arquivos do Site e o conteúdo, conforme cláusula 6. Os dados são mantidos por <strong>30 (trinta) dias</strong> após o encerramento, para eventual retomada, e depois descartados.</p>
 
 <h2>13. Conteúdo, dados pessoais e LGPD</h2>
-<p><strong>13.1</strong> Todo o conteúdo publicado no Site — textos, imagens, vídeos, ofertas, informações comerciais, preços, condições e declarações — é de <strong>exclusiva responsabilidade da Contratante</strong>, que responde por sua veracidade, licitude e conformidade com a legislação.</p>
+<p><strong>13.1</strong> Todo o conteúdo publicado no Site - textos, imagens, vídeos, ofertas, informações comerciais, preços, condições e declarações - é de <strong>exclusiva responsabilidade da Contratante</strong>, que responde por sua veracidade, licitude e conformidade com a legislação.</p>
 <p><strong>13.2</strong> A Contratante é a <strong>controladora</strong> dos dados pessoais tratados no Site, nos termos da Lei 13.709/2018 (LGPD), cabendo a ela definir as finalidades do tratamento, as bases legais aplicáveis, atender às solicitações dos titulares e manter registro das operações.</p>
-<p><strong>13.3</strong> A Contratada atua como <strong>operadora</strong>, tratando os dados pessoais apenas para viabilizar o funcionamento e a manutenção do Site, seguindo as finalidades definidas pela Contratante e mantendo as medidas técnicas de segurança previstas neste contrato — backup, certificado SSL, firewall e monitoramento.</p>
+<p><strong>13.3</strong> A Contratada atua como <strong>operadora</strong>, tratando os dados pessoais apenas para viabilizar o funcionamento e a manutenção do Site, seguindo as finalidades definidas pela Contratante e mantendo as medidas técnicas de segurança previstas neste contrato - backup, certificado SSL, firewall e monitoramento.</p>
 <p><strong>13.4</strong> As partes mantêm sigilo sobre informações comerciais e técnicas a que tiverem acesso.</p>
 
 <h2>14. Limitação de responsabilidade</h2>
@@ -177,7 +177,7 @@ class PropostaModeloSeeder extends Seeder
 <p>Este contrato é regido pelas leis brasileiras. Fica eleito o <strong>foro da Comarca de Brasília-DF</strong> para dirimir controvérsias, com renúncia a qualquer outro.</p>
 
 <p><strong>Local e data:</strong> ______________________</p>
-<p><strong>Contratada:</strong> Crie Sites Pro — ______________________<br><strong>Contratante:</strong> ______________________</p>
+<p><strong>Contratada:</strong> Crie Sites Pro - ______________________<br><strong>Contratante:</strong> ______________________</p>
 HTML;
     }
 
@@ -191,7 +191,7 @@ HTML;
 <h2>O que será entregue</h2>
 <ul>
 <li>1 página, com até 5 seções, mais cabeçalho e rodapé</li>
-<li>Layout responsivo — celular, tablet e desktop</li>
+<li>Layout responsivo - celular, tablet e desktop</li>
 <li>Formulário de contato e botão de WhatsApp</li>
 <li>SEO básico e integrações de rastreamento</li>
 <li>Publicação do site no ar</li>
@@ -199,7 +199,7 @@ HTML;
 
 <h2>O que não está incluso</h2>
 <ul>
-<li>Hospedagem e domínio — contratados pela Contratante, por conta dela</li>
+<li>Hospedagem e domínio - contratados pela Contratante, por conta dela</li>
 <li>Segurança, ajustes e suporte mensal</li>
 <li>Mensalidade de qualquer espécie</li>
 </ul>
@@ -209,7 +209,7 @@ HTML;
 <p>Entre <strong>10 e 15 dias</strong>, contando a partir do recebimento de todo o conteúdo: textos, imagens e logotipo.</p>
 
 <h2>Investimento</h2>
-<p><strong>R$ 900,00</strong> — metade para começar e metade na entrega, quando o site vai ao ar.</p>
+<p><strong>R$ 900,00</strong> - metade para começar e metade na entrega, quando o site vai ao ar.</p>
 
 <h2>Como seguimos</h2>
 <ol>

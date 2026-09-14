@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proposta — {{ $proposta->titulo }}</title>
+    <title>Proposta - {{ $proposta->titulo }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -188,11 +188,39 @@
                     </div>
                 </form>
             @endif
+
+            {{-- Assinaturas. A da contratada entra sozinha; a do contratante
+                 fica em branco até a assinatura pelo link, e sem nome embaixo. --}}
+            <div class="border-t border-slate-100 mt-6 pt-6 grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div class="text-center">
+                    <div class="border-b-2 border-slate-300 pb-1 mb-2 h-12 flex items-end justify-center">
+                        <span class="text-xl text-blue-900 opacity-80" style="font-family: 'Brush Script MT', cursive, sans-serif;">{{ config('empresa.responsavel.assinatura') }}</span>
+                    </div>
+                    <p class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-0.5">Assinatura da Contratada</p>
+                    <p class="text-[10px] text-slate-400 font-medium tracking-wide">
+                        {{ config('empresa.responsavel.nome') }} - {{ config('empresa.responsavel.cargo') }}
+                    </p>
+                </div>
+
+                <div class="text-center">
+                    <div class="border-b-2 border-slate-300 pb-1 mb-2 h-12 flex items-end justify-center">
+                        @if($proposta->assinado_em)
+                            <span class="text-xl text-blue-900 opacity-80" style="font-family: 'Brush Script MT', cursive, sans-serif;">{{ $proposta->assinado_por_nome }}</span>
+                        @endif
+                    </div>
+                    <p class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-0.5">Assinatura do Contratante</p>
+                    @if($proposta->assinado_em)
+                        <p class="text-[10px] text-slate-400 font-medium tracking-wide">
+                            Assinado em {{ \Carbon\Carbon::parse($proposta->assinado_em)->format('d/m/Y \à\s H:i') }}
+                        </p>
+                    @endif
+                </div>
+            </div>
         </div>
 
         {{-- Footer --}}
         <p class="text-center text-xs text-slate-400 pb-6">
-            Documento gerado via Propovelz · {{ now()->format('Y') }}
+            {{ config('empresa.nome') }} · {{ config('empresa.site') }} · {{ now()->format('Y') }}
         </p>
     </div>
 </body>

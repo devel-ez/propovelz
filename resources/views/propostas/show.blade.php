@@ -1,4 +1,4 @@
-<x-layouts.app>
+﻿<x-layouts.app>
     <div class="p-6 md:p-8 max-w-5xl mx-auto">
         {{-- Header / Actions --}}
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -200,21 +200,39 @@
                 </div>
                 @endif
                 
-                {{-- Termos e Assinatura --}}
-                <div class="pt-12 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-end gap-12 sm:gap-4">
-                    <div class="text-xs text-slate-500 max-w-sm">
+                {{-- Termos e Assinaturas --}}
+                <div class="pt-12 border-t border-slate-200">
+                    <div class="text-xs text-slate-500 max-w-sm mb-10">
                         <p class="mb-1">Este documento tem validade legal e os valores descritos são confidenciais.</p>
                         <p>Dúvidas? Entre em contato conosco através do e-mail de suporte institucional.</p>
                     </div>
-                    
-                    <div class="w-full sm:w-64 text-center">
-                        <div class="border-b-2 border-slate-400 pb-1 mb-2 h-12 flex items-end justify-center">
+
+                    <div class="flex flex-col sm:flex-row justify-between gap-12 sm:gap-8">
+                        {{-- Contratada: assinatura automática --}}
+                        <div class="w-full sm:w-64 text-center">
+                            <div class="border-b-2 border-slate-400 pb-1 mb-2 h-12 flex items-end justify-center">
+                                <span class="font-signature text-2xl text-blue-900 opacity-80" style="font-family: 'Brush Script MT', cursive, sans-serif;">{{ config('empresa.responsavel.assinatura') }}</span>
+                            </div>
+                            <p class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-0.5">Assinatura da Contratada</p>
+                            <p class="text-[10px] text-slate-400 font-medium tracking-wide">
+                                {{ config('empresa.responsavel.nome') }} - {{ config('empresa.responsavel.cargo') }}
+                            </p>
+                        </div>
+
+                        {{-- Contratante: em branco até assinar pelo link --}}
+                        <div class="w-full sm:w-64 text-center">
+                            <div class="border-b-2 border-slate-400 pb-1 mb-2 h-12 flex items-end justify-center">
+                                @if($proposta->assinado_em)
+                                    <span class="font-signature text-2xl text-blue-900 opacity-80" style="font-family: 'Brush Script MT', cursive, sans-serif;">{{ $proposta->assinado_por_nome }}</span>
+                                @endif
+                            </div>
+                            <p class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-0.5">Assinatura do Contratante</p>
                             @if($proposta->assinado_em)
-                                <span class="font-signature text-2xl text-blue-900 opacity-80" style="font-family: 'Brush Script MT', cursive, sans-serif;">{{ $proposta->assinado_por_nome }}</span>
+                                <p class="text-[10px] text-slate-400 font-medium tracking-wide">
+                                    Assinado em {{ \Carbon\Carbon::parse($proposta->assinado_em)->format('d/m/Y \à\s H:i') }}
+                                </p>
                             @endif
                         </div>
-                        <p class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-0.5">Assinatura do Cliente</p>
-                        <p class="text-[10px] text-slate-400 font-medium tracking-wide">{{ $proposta->cliente?->nome }}</p>
                     </div>
                 </div>
             </div>

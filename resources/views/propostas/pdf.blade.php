@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -14,7 +14,13 @@
             margin: 0;
         }
         body {
-            font-family: 'Helvetica', 'Arial', sans-serif;
+            /* DejaVu Sans, e não Helvetica: a Helvetica do dompdf é a fonte
+               core, limitada a Latin-1, e DESCARTA caracteres como travessão
+               (-) e aspas curvas. O contrato de manutenção usa travessão 12
+               vezes, e eles sumiam do PDF. A DejaVu vem com o dompdf e cobre
+               esses caracteres. A capa mantém Helvetica (ver .cover-page),
+               porque tem posicionamento exato. */
+            font-family: 'DejaVu Sans', sans-serif;
             color: #333;
             margin: 0;
             padding: 0;
@@ -35,6 +41,9 @@
             overflow: hidden;
             page-break-after: always;
             box-sizing: border-box;
+            /* Helvetica aqui, e não a DejaVu do body: a capa usa posicionamento
+               absoluto e medidas exatas, e a DejaVu é mais larga. */
+            font-family: 'Helvetica', 'Arial', sans-serif;
         }
         .shape-top-right {
             position: absolute;
@@ -83,6 +92,9 @@
             color: #0a0f1c;
             margin-bottom: 80px;
             letter-spacing: -0.5px;
+            /* Helvetica fixo na capa: ela tem posicionamento exato e a DejaVu,
+               sendo mais larga, estouraria o layout. */
+            font-family: 'Helvetica', 'Arial', sans-serif;
         }
         .cover-title {
             font-size: 48px;
@@ -106,6 +118,7 @@
             border-left: 5px solid #2563eb;
             padding-left: 15px;
             line-height: 1.4;
+            font-family: 'Helvetica', 'Arial', sans-serif;
         }
         .cover-bullets {
             margin-top: 50px;
@@ -119,6 +132,7 @@
             font-size: 16px;
             color: #475569;
             font-weight: 500;
+            font-family: 'Helvetica', 'Arial', sans-serif;
         }
         .cover-bullets td.bullet {
             color: #2563eb;
@@ -217,27 +231,37 @@
             color: #111;
         }
         .signature-section {
-            margin-top: 60px;
+            margin-top: 50px;
             width: 100%;
         }
         .signature-box {
-            width: 250px;
-            float: right;
+            width: 45%;
             text-align: center;
+        }
+        .signature-box-esquerda {
+            float: left;
+        }
+        .signature-box-direita {
+            float: right;
         }
         .signature-line {
             border-bottom: 1px solid #333;
             margin-bottom: 5px;
             height: 40px;
-            font-size: 20px;
+            font-size: 18px;
             color: #2563eb;
             font-style: italic;
         }
         .signature-name {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             text-transform: uppercase;
             margin: 0;
+        }
+        .signature-role {
+            font-size: 10px;
+            color: #666;
+            margin: 2px 0 0 0;
         }
         .signature-date {
             font-size: 10px;
@@ -381,26 +405,37 @@
     @endif
 
     <div class="signature-section">
-        <div style="float: left; width: 55%; font-size: 12px; line-height: 1.5; color: #64748b; padding-top: 20px;">
+        <div style="font-size: 12px; line-height: 1.5; color: #64748b; margin-bottom: 40px;">
             <p style="margin: 0 0 10px 0;"><strong>Confidencialidade:</strong> Este documento tem validade legal e os valores comerciais aqui descritos são de caráter estritamente confidencial.</p>
             <p style="margin: 0;"><strong>Suporte:</strong> Dúvidas? Entre em contato conosco através do canal de atendimento exclusivo da Crie Sites Pro.</p>
         </div>
-        
-        <div class="signature-box">
+
+        {{-- Contratada: assinatura fixa, entra automaticamente ao salvar a proposta --}}
+        <div class="signature-box signature-box-esquerda">
+            <div class="signature-line">{{ config('empresa.responsavel.assinatura') }}</div>
+            <p class="signature-name">Assinatura da Contratada</p>
+            <p class="signature-role">
+                {{ config('empresa.responsavel.nome') }} - {{ config('empresa.responsavel.cargo') }}
+            </p>
+        </div>
+
+        {{-- Contratante: a linha fica em branco até assinar pelo link.
+             Sem nome embaixo de propósito - quem assina escreve o próprio
+             nome no momento da assinatura, e ele aparece aqui depois. --}}
+        <div class="signature-box signature-box-direita">
             <div class="signature-line">
                 @if($proposta->assinado_em)
                     {{ \Illuminate\Support\Str::title($proposta->assinado_por_nome) }}
                 @endif
             </div>
-            <p class="signature-name">Assinatura do Cliente</p>
-            <p class="signature-date">
-                @if($proposta->assinado_em)
+            <p class="signature-name">Assinatura do Contratante</p>
+            @if($proposta->assinado_em)
+                <p class="signature-date">
                     Assinado em {{ \Carbon\Carbon::parse($proposta->assinado_em)->format('d/m/Y H:i') }}
-                @else
-                    {{ $proposta->cliente?->nome }}
-                @endif
-            </p>
+                </p>
+            @endif
         </div>
+
         <div style="clear: both;"></div>
     </div>
 
