@@ -66,6 +66,14 @@ class PerfilController extends Controller
             if ($antiga && $antiga !== $user->avatar) {
                 Storage::disk('local')->delete($antiga);
             }
+
+            // Deixa sempre quadrada e quadrada de verdade. A tela já manda o
+            // recorte pronto, mas se o navegador não conseguir aplicar o
+            // ajuste, isso evita que a foto chegue torta e seja cortada no
+            // meio pela moldura redonda.
+            // O caminho pode mudar (PNG vira JPG), então o retorno vai para o
+            // banco.
+            $user->avatar = $this->quadrar($user->avatar);
         }
 
         $user->save();
@@ -121,6 +129,76 @@ class PerfilController extends Controller
         }
 
         return redirect()->route('perfil.edit')->with('success', 'Foto removida.');
+    }
+
+    /**
+     * Recorta a foto em quadrado e reduz para 400x400, gravando como JPEG.
+     *
+     * Devolve o caminho final: o nome do arquivo muda de extensão quando a
+     * origem não é JPEG, então quem chamou precisa gravar esse retorno no
+     * banco - senão o avatar apontaria para um arquivo já apagado.
+     *
+     * A tela de perfil já envia o recorte escolhido pelo usuário. Isto aqui é a
+     * garantia do lado do servidor: qualquer imagem que chegue - inclusive de
+     * navegador que não conseguiu aplicar o ajuste - termina quadrada, então a
+     * moldura circular do painel nunca corta a foto no meio.
+     *
+     * Falha em silêncio de propósito: sem GD, a foto original continua valendo
+     * em vez de a atualização dar erro.
+     */
+    private function quadrar(string $caminho): string
+    {
+        if (! function_exists('imagecreatefromstring')) {
+            return $caminho;
+        }
+
+        $disco = Storage::disk('local');
+        $bruto = @file_get_contents($disco->path($caminho));
+        if ($bruto === false) {
+            return $caminho;
+        }
+
+        $origem = @imagecreatefromstring($bruto);
+        if (! $origem) {
+            return $caminho;
+        }
+
+        $lado = 400;
+        $w = imagesx($origem);
+        $h = imagesy($origem);
+        $menor = min($w, $h);
+
+        $destino = imagecreatetruecolor($lado, $lado);
+        // Fundo branco: foto PNG com transparência viraria preto no JPEG.
+        imagefilledrectangle($destino, 0, 0, $lado, $lado, imagecolorallocate($destino, 255, 255, 255));
+
+        // Recorte central quando a imagem não vem quadrada
+        imagecopyresampled(
+            $destino, $origem,
+            0, 0,
+            (int) (($w - $menor) / 2), (int) (($h - $menor) / 2),
+            $lado, $lado,
+            $menor, $menor
+        );
+
+        $nome     = pathinfo($caminho, PATHINFO_FILENAME) . '.jpg';
+        $relativo = self::PASTA . '/' . $nome;
+        $gravou   = @imagejpeg($destino, $disco->path($relativo), 90);
+
+        imagedestroy($origem);
+        imagedestroy($destino);
+
+        if (! $gravou) {
+            return $caminho;
+        }
+
+        // Só apaga o original depois de o JPEG estar gravado, e só se o nome
+        // tiver mudado (fonte JPEG gera o mesmo nome).
+        if ($relativo !== $caminho) {
+            $disco->delete($caminho);
+        }
+
+        return $relativo;
     }
 
     /**
