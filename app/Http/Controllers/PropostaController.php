@@ -6,6 +6,7 @@ use App\Http\Requests\StorePropostaRequest;
 use App\Models\Cliente;
 use App\Models\Proposta;
 use App\Models\PropostaItem;
+use App\Models\PropostaModelo;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -62,10 +63,12 @@ class PropostaController extends Controller
     public function create(): View
     {
         $clientes = Cliente::where('tenant_id', self::TENANT_ID)->orderBy('nome')->get();
+        $modelos  = PropostaModelo::orderBy('titulo')->get(['id', 'titulo']);
 
         return view('propostas.create', [
             'clientes' => $clientes,
             'statuses' => self::STATUSES,
+            'modelos'  => $modelos,
         ]);
     }
 
@@ -109,12 +112,44 @@ class PropostaController extends Controller
     {
         $proposta->load('itens');
         $clientes = Cliente::where('tenant_id', self::TENANT_ID)->orderBy('nome')->get();
+        $modelos  = PropostaModelo::orderBy('titulo')->get(['id', 'titulo']);
 
         return view('propostas.edit', [
             'proposta' => $proposta,
             'clientes' => $clientes,
             'statuses' => self::STATUSES,
+            'modelos'  => $modelos,
         ]);
+    }
+
+    /**
+     * Duplica uma proposta: mesmo conteúdo e mesmos itens, cliente e status
+     * voltam ao início.
+     *
+     * Nasce como "Cópia de X" para não se confundir com a original nas listas,
+     * e o token público não é copiado - cada proposta precisa do seu, senão
+     * dois documentos diferentes responderiam no mesmo link de assinatura.
+     */
+    public function duplicar(Proposta $proposta): RedirectResponse
+    {
+        $proposta->load('itens');
+
+        $nova = $proposta->replicate(['token_publico', 'assinado_em', 'assinado_por_nome']);
+        $nova->titulo = 'Cópia de ' . $proposta->titulo;
+        $nova->status = 'rascunho';
+        $nova->token_publico = null;
+        $nova->assinado_em = null;
+        $nova->assinado_por_nome = null;
+        $nova->save();
+
+        foreach ($proposta->itens as $item) {
+            $novoItem = $item->replicate();
+            $novoItem->proposta_id = $nova->id;
+            $novoItem->save();
+        }
+
+        return redirect()->route('propostas.edit', $nova)
+            ->with('success', 'Proposta duplicada. Ajuste o que precisar e salve.');
     }
 
     public function update(Request $request, Proposta $proposta): RedirectResponse

@@ -9,6 +9,7 @@ use App\Http\Controllers\LixeiraController;
 use App\Http\Controllers\ProjetoAnotacaoController;
 use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\PropostaController;
+use App\Http\Controllers\PropostaModeloController;
 use App\Http\Controllers\PropostaPublicaController;
 use App\Http\Controllers\TarefaController;
 use App\Http\Controllers\WhoisController;
@@ -84,6 +85,17 @@ Route::middleware('auth')->group(function () {
     // Gerar link público de uma proposta
     Route::post('propostas/{proposta}/gerar-link', [PropostaController::class, 'gerarLink'])
         ->name('propostas.gerar-link');
+
+    // Duplicar proposta (mesmo conteúdo e itens, cliente a definir)
+    Route::post('propostas/{proposta}/duplicar', [PropostaController::class, 'duplicar'])
+        ->name('propostas.duplicar');
+
+    // Modelos de proposta: textos que se repetem de cliente para cliente
+    Route::get('modelos', [PropostaModeloController::class, 'index'])->name('modelos.index');
+    Route::get('modelos/{modelo}/conteudo', [PropostaModeloController::class, 'conteudo'])->name('modelos.conteudo');
+    Route::post('modelos', [PropostaModeloController::class, 'store'])->name('modelos.store');
+    Route::patch('modelos/{modelo}', [PropostaModeloController::class, 'update'])->name('modelos.update');
+    Route::delete('modelos/{modelo}', [PropostaModeloController::class, 'destroy'])->name('modelos.destroy');
 });
 
 /*

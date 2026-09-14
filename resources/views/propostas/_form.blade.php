@@ -94,6 +94,20 @@
          class="border border-t-0 border-slate-200 rounded-b-xl bg-white min-h-[200px] px-4 py-3 text-sm text-slate-700 focus:outline-none"
          style="min-height:200px">{!! old('conteudo', $p?->conteudo) !!}</div>
     <input type="hidden" id="conteudo-hidden" name="conteudo" value="{{ old('conteudo', $p?->conteudo) }}">
+
+    @if(isset($modelos) && $modelos->isNotEmpty())
+        <div class="flex flex-wrap items-center gap-2 pt-2">
+            <label for="modelo-select" class="text-xs font-semibold text-slate-500">Inserir modelo:</label>
+            <select id="modelo-select"
+                    class="text-xs border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400">
+                <option value="">Escolha um modelo…</option>
+                @foreach($modelos as $modelo)
+                    <option value="{{ $modelo->id }}">{{ $modelo->titulo }}</option>
+                @endforeach
+            </select>
+            <span class="text-xs text-slate-400">substitui o texto do editor pelo conteúdo do modelo</span>
+        </div>
+    @endif
 </div>
 
 {{-- ===== TABELA DE ITENS ===== --}}
@@ -224,6 +238,46 @@
 
     // Garante que o campo já nasce com o que está no editor (modo edição)
     sincronizarConteudo();
+
+    // -------- INSERIR MODELO --------
+    // O conteúdo vem por requisição, e não embutido na página: com vários
+    // modelos, embutir todos engordaria a página de toda proposta aberta.
+    const seletorModelo = document.getElementById('modelo-select');
+
+    if (seletorModelo) {
+        seletorModelo.addEventListener('change', async function () {
+            const id = this.value;
+            if (!id) return;
+
+            const jaTemTexto = quill.getText().trim().length > 10;
+
+            if (jaTemTexto && ! confirm('Isto substitui o texto que está no editor. Continuar?')) {
+                this.value = '';
+                return;
+            }
+
+            const escolhido = this.options[this.selectedIndex].text;
+            seletorModelo.disabled = true;
+
+            try {
+                const resposta = await fetch('{{ url('modelos') }}/' + id + '/conteudo', {
+                    headers: { 'Accept': 'application/json' },
+                });
+
+                if (! resposta.ok) throw new Error('HTTP ' + resposta.status);
+
+                const dados = await resposta.json();
+                quill.clipboard.dangerouslyPasteHTML(dados.conteudo || '');
+                sincronizarConteudo();
+            } catch (e) {
+                alert('Não consegui carregar o modelo "' + escolhido + '". Tente de novo.');
+                console.error(e);
+            } finally {
+                seletorModelo.disabled = false;
+                seletorModelo.value = ''; // volta ao estado inicial, para poder repetir
+            }
+        });
+    }
 
     // -------- ITEMS TABLE --------
     const tbody   = document.getElementById('itens-tbody');
