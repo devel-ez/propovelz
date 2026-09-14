@@ -48,45 +48,56 @@ class FaturaController extends Controller
             'vencimento'       => 'nullable|date',
             'observacoes'      => 'nullable|string|max:2000',
             'mes_inicio'       => 'nullable|date', // primeiro mês para contrato mensal
+            // Quantas parcelas gerar. Era 12 fixo; o contrato varia por cliente.
+            'parcelas'         => 'nullable|integer|min:1|max:60',
+            // Dia do vencimento. Limitado a 28 de propósito: dia 29, 30 ou 31
+            // não existe em todo mês, e a fatura cairia em data errada.
+            'dia_vencimento'   => 'nullable|integer|min:1|max:28',
         ]);
 
         if ($validated['tipo'] === 'mensal') {
-            // Gera 12 faturas mensais agrupadas
+            $parcelas = (int) ($validated['parcelas'] ?? 12);
+            $dia      = (int) ($validated['dia_vencimento'] ?? 5);
+
+            // Gera as faturas mensais agrupadas sob o mesmo contrato
             $grupoClone = (string) Str::uuid();
             $mesInicio  = Carbon::parse($validated['mes_inicio'] ?? now())->startOfMonth();
 
-            for ($i = 0; $i < 12; $i++) {
+            for ($i = 0; $i < $parcelas; $i++) {
                 $mes = $mesInicio->copy()->addMonths($i);
                 Fatura::create([
-                    'cliente_id'       => $validated['cliente_id'],
-                    'projeto_id'       => $validated['projeto_id'],
+                    'cliente_id'       => $validated['cliente_id'] ?? null,
+                    'projeto_id'       => $validated['projeto_id'] ?? null,
                     'tipo'             => 'mensal',
                     'descricao_servico'=> $validated['descricao_servico'],
-                    'valor'            => $validated['valor'],
+                    'valor'            => $validated['valor'] ?? null,
                     'mes_referencia'   => $mes->format('Y-m-d'),
-                    'vencimento'       => $mes->copy()->addDays(5)->format('Y-m-d'), // venc dia 5
+                    'vencimento'       => $mes->copy()->day($dia)->format('Y-m-d'),
                     'pago'             => false,
-                    'observacoes'      => $validated['observacoes'],
+                    'observacoes'      => $validated['observacoes'] ?? null,
                     'grupo_clone'      => $grupoClone,
                 ]);
             }
         } else {
             Fatura::create([
-                'cliente_id'       => $validated['cliente_id'],
-                'projeto_id'       => $validated['projeto_id'],
+                'cliente_id'       => $validated['cliente_id'] ?? null,
+                'projeto_id'       => $validated['projeto_id'] ?? null,
                 'tipo'             => 'unica',
                 'descricao_servico'=> $validated['descricao_servico'],
-                'valor'            => $validated['valor'],
-                'vencimento'       => $validated['vencimento'],
+                'valor'            => $validated['valor'] ?? null,
+                'vencimento'       => $validated['vencimento'] ?? null,
                 'pago'             => false,
-                'observacoes'      => $validated['observacoes'],
+                'observacoes'      => $validated['observacoes'] ?? null,
             ]);
         }
 
-        return redirect()->route('faturas.index')
-            ->with('success', $validated['tipo'] === 'mensal'
-                ? '12 faturas mensais criadas com sucesso!'
-                : 'Fatura criada com sucesso!');
+        // O texto trazia '12' fixo, que deixou de ser verdade quando o numero
+        // de parcelas virou escolha do usuario.
+        $mensagem = $validated['tipo'] === 'mensal'
+            ? $parcelas . ($parcelas === 1 ? ' fatura mensal criada com sucesso!' : ' faturas mensais criadas com sucesso!')
+            : 'Fatura criada com sucesso!';
+
+        return redirect()->route('faturas.index')->with('success', $mensagem);
     }
 
     public function edit(Fatura $fatura)

@@ -10,11 +10,11 @@
             </a>
             <div>
                 <h1 class="text-2xl font-bold text-slate-900">Nova Fatura</h1>
-                <p class="text-sm text-slate-500 mt-0.5">Crie uma fatura única ou gere 12 meses de uma vez</p>
+                <p class="text-sm text-slate-500 mt-0.5">Crie uma fatura única ou gere um contrato parcelado</p>
             </div>
         </div>
 
-        <form method="POST" action="{{ route('faturas.store') }}" class="space-y-6" x-data="{ tipo: 'unica' }">
+        <form method="POST" action="{{ route('faturas.store') }}" class="space-y-6" x-data="{ tipo: 'unica', parcelas: 12, dia: 5 }">
             @csrf
 
             {{-- Tipo --}}
@@ -43,7 +43,7 @@
                             </svg>
                             <div>
                                 <span class="font-semibold text-sm block">Contrato Mensal</span>
-                                <span class="text-xs opacity-70">Gera 12 meses de uma vez</span>
+                                <span class="text-xs opacity-70">Gera as parcelas de uma vez</span>
                             </div>
                         </div>
                     </label>
@@ -53,7 +53,9 @@
                 <div x-show="tipo === 'mensal'" x-transition
                      class="mt-3 px-4 py-3 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-700 flex items-start gap-2">
                     <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    Serão criadas <strong>12 faturas mensais</strong> automaticamente (vencimento dia 5 de cada mês), agrupadas sob o mesmo contrato.
+                    Serão criadas <strong x-text="parcelas"></strong> <span x-text="parcelas == 1 ? 'fatura mensal' : 'faturas mensais'"></span>
+                    automaticamente, com vencimento <strong>dia <span x-text="dia"></span></strong> de cada mês,
+                    agrupadas sob o mesmo contrato.
                 </div>
             </div>
 
@@ -124,6 +126,35 @@
                     </div>
                 </div>
 
+                {{-- Parcelamento (só no contrato mensal) --}}
+                <div class="grid grid-cols-2 gap-4" x-show="tipo === 'mensal'" x-transition>
+                    {{-- Quantidade de parcelas --}}
+                    <div>
+                        <label for="parcelas" class="block text-sm font-medium text-slate-700 mb-1.5">
+                            Quantidade de Parcelas <span class="text-red-500">*</span>
+                        </label>
+                        <input type="number" name="parcelas" id="parcelas" min="1" max="60" step="1"
+                               x-model.number="parcelas"
+                               value="{{ old('parcelas', 12) }}"
+                               class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-100 focus:border-brand-400 transition-all">
+                        <p class="text-xs text-slate-400 mt-1">Entre 1 e 60. Era fixo em 12.</p>
+                        @error('parcelas') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    {{-- Dia do vencimento --}}
+                    <div>
+                        <label for="dia_vencimento" class="block text-sm font-medium text-slate-700 mb-1.5">
+                            Dia do Vencimento
+                        </label>
+                        <input type="number" name="dia_vencimento" id="dia_vencimento" min="1" max="28" step="1"
+                               x-model.number="dia"
+                               value="{{ old('dia_vencimento', 5) }}"
+                               class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-100 focus:border-brand-400 transition-all">
+                        <p class="text-xs text-slate-400 mt-1">Até 28, para todo mês ter esse dia.</p>
+                        @error('dia_vencimento') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
                 {{-- Observações --}}
                 <div>
                     <label for="observacoes" class="block text-sm font-medium text-slate-700 mb-1.5">Observações</label>
@@ -141,7 +172,7 @@
                 </a>
                 <button type="submit"
                         class="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl shadow-sm shadow-brand-200 transition-colors"
-                        x-text="tipo === 'mensal' ? 'Criar 12 Faturas Mensais' : 'Criar Fatura'">
+                        x-text="tipo === 'mensal' ? 'Criar ' + parcelas + (parcelas == 1 ? ' Fatura Mensal' : ' Faturas Mensais') : 'Criar Fatura'">
                 </button>
             </div>
         </form>
