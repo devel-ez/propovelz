@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FaturaController;
 use App\Http\Controllers\HospedagemController;
 use App\Http\Controllers\LixeiraController;
+use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ProjetoAnotacaoController;
 use App\Http\Controllers\ProjetoController;
 use App\Http\Controllers\PropostaController;
@@ -97,6 +98,15 @@ Route::middleware('auth')->group(function () {
     Route::post('modelos', [PropostaModeloController::class, 'store'])->name('modelos.store');
     Route::put('modelos/{modelo}', [PropostaModeloController::class, 'update'])->name('modelos.update');
     Route::delete('modelos/{modelo}', [PropostaModeloController::class, 'destroy'])->name('modelos.destroy');
+
+    // Perfil: nome, e-mail, foto e troca de senha.
+    // A rota da foto vem antes porque 'perfil/avatar' também casaria com
+    // qualquer rota de perfil com parâmetro, se um dia existir.
+    Route::get('perfil/avatar', [PerfilController::class, 'avatar'])->name('perfil.avatar');
+    Route::get('perfil', [PerfilController::class, 'edit'])->name('perfil.edit');
+    Route::put('perfil', [PerfilController::class, 'update'])->name('perfil.update');
+    Route::put('perfil/senha', [PerfilController::class, 'senha'])->name('perfil.senha');
+    Route::delete('perfil/avatar', [PerfilController::class, 'removerAvatar'])->name('perfil.avatar.remover');
 });
 
 /*

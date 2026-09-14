@@ -208,18 +208,36 @@
 
         <!-- Bottom Section -->
         <div class="px-4 pb-4 pt-2 bg-white">
-            <!-- User Profile -->
+            @php
+                $u = auth()->user();
+                $partes = preg_split('/\s+/', trim($u->name));
+                $iniciais = mb_strtoupper(mb_substr($partes[0] ?? '', 0, 1) . mb_substr($partes[1] ?? '', 0, 1));
+                $noPerfil = request()->routeIs('perfil.*');
+            @endphp
+
+            <!-- User Profile — clicável: leva para o perfil, onde se troca a senha -->
             <div class="flex items-center justify-between gap-2 pt-3 border-t border-slate-100">
-                <div class="flex items-center gap-3 min-w-0">
-                    <div class="w-8 h-8 rounded-full overflow-hidden border border-slate-200 shadow-sm flex-shrink-0">
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=020617&color=fff"
-                             alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
+                <a href="{{ route('perfil.edit') }}"
+                   class="flex items-center gap-3 min-w-0 rounded-xl px-2 py-1.5 -mx-2 transition-colors {{ $noPerfil ? 'bg-brand-50' : 'hover:bg-slate-50' }}"
+                   title="Editar perfil e trocar a senha">
+
+                    {{-- Foto do próprio painel. Antes vinha do ui-avatars.com, um
+                         serviço externo: cada abertura do painel avisava terceiros
+                         e, se ele caísse, a foto sumia. --}}
+                    <div class="w-8 h-8 rounded-full overflow-hidden border border-slate-200 shadow-sm flex-shrink-0 grid place-items-center bg-brand-50">
+                        @if ($u->avatar)
+                            <img src="{{ route('perfil.avatar') }}?v={{ $u->updated_at?->timestamp }}"
+                                 alt="{{ $u->name }}" class="w-full h-full object-cover">
+                        @else
+                            <span class="text-[11px] font-bold text-brand-600">{{ $iniciais }}</span>
+                        @endif
                     </div>
+
                     <div class="flex flex-col min-w-0">
-                        <span class="text-sm font-bold text-slate-800 truncate">{{ auth()->user()->name }}</span>
-                        <span class="text-[10px] text-slate-500 truncate">{{ auth()->user()->email }}</span>
+                        <span class="text-sm font-bold text-slate-800 truncate">{{ $u->name }}</span>
+                        <span class="text-[10px] text-slate-500 truncate">{{ $u->email }}</span>
                     </div>
-                </div>
+                </a>
 
                 <form method="POST" action="{{ route('logout') }}" class="flex-shrink-0">
                     @csrf
